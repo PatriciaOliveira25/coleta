@@ -1,0 +1,332 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Protótipo — Enviali Coleta</title>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/tabler-icons/2.44.0/iconfont/tabler-icons.min.css">
+<style>
+  :root {
+    --surface-2: #ffffff;
+    --surface-1: #f4f3ee;
+    --surface-0: #ebe9e1;
+    --border: #d9d9d6;
+    --border-strong: #b9b8b0;
+    --border-accent: #1d9e75;
+    --text-primary: #1a1a1a;
+    --text-secondary: #5f5e5a;
+    --text-muted: #888780;
+    --text-accent: #0f6e56;
+    --text-danger: #a32d2d;
+    --text-warning: #854f0b;
+    --text-success: #3b6d11;
+    --bg-accent: #e1f5ee;
+    --bg-danger: #fcebeb;
+    --bg-warning: #faeeda;
+    --bg-success: #eaf3de;
+    --fill-success: #639922;
+    --radius: 8px;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root {
+      --surface-2: #292826;
+      --surface-1: #201f1d;
+      --surface-0: #171716;
+      --border: #3a3936;
+      --border-strong: #56554f;
+      --text-primary: #f1efe8;
+      --text-secondary: #b4b2a9;
+      --text-muted: #888780;
+      --bg-accent: #04342c;
+      --bg-danger: #501313;
+      --bg-warning: #412402;
+      --bg-success: #173404;
+    }
+  }
+  * { box-sizing: border-box; }
+  body {
+    margin: 0;
+    background: var(--surface-0);
+    color: var(--text-primary);
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+    padding: 32px 16px 64px;
+  }
+  .wrap { max-width: 700px; margin: 0 auto; }
+  .top {
+    text-align: center;
+    margin-bottom: 28px;
+  }
+  .top p.eyebrow {
+    font-size: 12px;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+    color: var(--text-muted);
+    margin: 0 0 6px;
+  }
+  .top h1 { font-size: 22px; font-weight: 500; margin: 0 0 6px; }
+  .top p.sub { font-size: 14px; color: var(--text-secondary); margin: 0; }
+  .stg { display: none; }
+  .stg.active { display: block; }
+  .lbl {
+    font-size: 11px;
+    color: var(--text-muted);
+    margin: 0 0 10px;
+    text-transform: uppercase;
+    letter-spacing: 0.03em;
+  }
+  .card {
+    background: var(--surface-2);
+    border: 0.5px solid var(--border);
+    border-radius: 12px;
+    padding: 1.25rem;
+  }
+  button {
+    font-family: inherit;
+    font-size: 14px;
+    background: var(--surface-2);
+    border: 0.5px solid var(--border-strong);
+    border-radius: var(--radius);
+    padding: 8px 16px;
+    cursor: pointer;
+    color: var(--text-primary);
+  }
+  button:hover { background: var(--surface-1); }
+  input, select {
+    font-family: inherit;
+    font-size: 14px;
+    width: 100%;
+    padding: 8px 10px;
+    border: 0.5px solid var(--border);
+    border-radius: var(--radius);
+    background: var(--surface-2);
+    color: var(--text-primary);
+  }
+  .row { display: flex; gap: 8px; margin-bottom: 10px; }
+  .field { flex: 1; }
+  .field label { font-size: 12px; color: var(--text-secondary); display: block; margin-bottom: 4px; }
+  .chip {
+    display: inline-flex; align-items: center; justify-content: center;
+    padding: 6px 10px; border-radius: 6px; border: 0.5px solid var(--border);
+    font-size: 13px; cursor: pointer; background: var(--surface-2);
+  }
+  .chip.on { background: var(--bg-accent); color: var(--text-accent); border-color: var(--border-accent); }
+  .pill { padding: 5px 12px; border-radius: 6px; font-size: 13px; cursor: pointer; border: 0.5px solid var(--border); background: var(--surface-2); }
+  .pill.sel { border-color: var(--border-accent); color: var(--text-accent); }
+  .outc { display: none; }
+  .outc.on { display: block; }
+  .dots { display: flex; gap: 6px; justify-content: center; margin-top: 20px; }
+  .dot { width: 8px; height: 8px; border-radius: 50%; background: var(--border-strong); cursor: pointer; border: none; padding: 0; }
+  .dot.on { background: var(--text-accent); }
+  .stat {
+    background: var(--surface-1); border-radius: var(--radius); padding: 10px 12px;
+  }
+  .stat p.k { font-size: 11px; color: var(--text-muted); margin: 0 0 2px; }
+  .stat p.v { font-size: 13px; margin: 0; }
+  .row2 { display: grid; grid-template-columns: repeat(2, minmax(0,1fr)); gap: 10px; margin-bottom: 14px; }
+  .footer-nav { display: flex; justify-content: center; gap: 8px; margin-top: 16px; }
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <div class="top">
+    <p class="eyebrow">Protótipo clicável</p>
+    <h1>Enviali Coleta</h1>
+    <p class="sub">Navegue pelas 7 telas usando os botões de cada uma ou os pontos abaixo.</p>
+  </div>
+
+  <div class="stg active" data-stg="0">
+    <p class="lbl">1. Lista de transportadoras</p>
+    <div class="card" style="display:flex;align-items:center;justify-content:space-between;gap:12px;">
+      <div style="display:flex;align-items:center;gap:12px;">
+        <div style="width:40px;height:40px;border-radius:8px;background:var(--bg-accent);display:flex;align-items:center;justify-content:center;font-weight:500;font-size:12px;color:var(--text-accent);">J&amp;T</div>
+        <div>
+          <p style="font-weight:500;font-size:15px;margin:0;">J&amp;T Express</p>
+          <p style="font-size:13px;color:var(--text-secondary);margin:2px 0 0;">Serviço de envio expresso</p>
+          <div style="display:inline-flex;align-items:center;gap:4px;background:var(--bg-success);color:var(--text-success);font-size:12px;padding:2px 8px;border-radius:6px;margin-top:6px;">
+            <i class="ti ti-truck" style="font-size:14px;"></i>
+            Coleta no endereço da loja
+          </div>
+        </div>
+      </div>
+      <button onclick="goTo(1)">Configurar</button>
+    </div>
+  </div>
+
+  <div class="stg" data-stg="1">
+    <p class="lbl">2. Tela informativa</p>
+    <div class="card">
+      <div style="display:flex;align-items:center;gap:10px;margin-bottom:4px;">
+        <i class="ti ti-truck" style="font-size:20px;color:var(--text-success)"></i>
+        <p style="font-weight:500;font-size:16px;margin:0;">Coleta no endereço da loja</p>
+      </div>
+      <p style="font-size:14px;color:var(--text-secondary);margin:0 0 16px;">Um motorista busca seus pacotes na loja. Você não precisa ir a um ponto de postagem.</p>
+      <div style="display:flex;flex-direction:column;gap:8px;margin-bottom:20px;">
+        <p style="font-size:13px;margin:0;"><i class="ti ti-clock" style="font-size:15px;margin-right:6px;color:var(--text-secondary);"></i>Corte às 23h59</p>
+        <p style="font-size:13px;margin:0;"><i class="ti ti-calendar" style="font-size:15px;margin-right:6px;color:var(--text-secondary);"></i>Coleta de segunda a sexta, 13h às 16h30</p>
+        <p style="font-size:13px;margin:0;"><i class="ti ti-coin" style="font-size:15px;margin-right:6px;color:var(--text-secondary);"></i>Custo incluso no frete</p>
+        <p style="font-size:13px;margin:0;"><i class="ti ti-map-pin" style="font-size:15px;margin-right:6px;color:var(--text-secondary);"></i>Rastreio começa após a coleta</p>
+      </div>
+      <div style="display:flex;gap:8px;">
+        <button onclick="goTo(0)">Voltar</button>
+        <button onclick="goTo(2)" style="border-color:var(--border-accent);color:var(--text-accent);">Solicitar coleta</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="stg" data-stg="2">
+    <p class="lbl">3. Formulário de solicitação</p>
+    <div class="card">
+      <p style="font-size:13px;color:var(--text-secondary);margin:0 0 14px;">Confira os dados da loja e escolha os dias desejados.</p>
+      <div class="row">
+        <div class="field"><label>Endereço de coleta</label><input type="text" value="Rua Exemplo, 123 - Centro"></div>
+      </div>
+      <div class="row">
+        <div class="field"><label>Complemento</label><input type="text" placeholder="Sala, bloco, andar"></div>
+        <div class="field"><label>Ponto de referência</label><input type="text" placeholder="Próximo a..."></div>
+      </div>
+      <div class="row">
+        <div class="field"><label>Responsável</label><input type="text" value="Marcelo Camillo"></div>
+        <div class="field"><label>Telefone</label><input type="text" value="(11) 99999-0000"></div>
+      </div>
+      <div class="row">
+        <div class="field"><label>E-mail</label><input type="text" value="marcelo@loja.com.br"></div>
+      </div>
+      <p style="font-size:12px;color:var(--text-secondary);margin:10px 0 6px;">Dias desejados para a coleta</p>
+      <div style="display:flex;gap:6px;margin-bottom:14px;">
+        <button class="chip on" onclick="this.classList.toggle('on')">Seg</button>
+        <button class="chip" onclick="this.classList.toggle('on')">Ter</button>
+        <button class="chip on" onclick="this.classList.toggle('on')">Qua</button>
+        <button class="chip on" onclick="this.classList.toggle('on')">Qui</button>
+        <button class="chip" onclick="this.classList.toggle('on')">Sex</button>
+      </div>
+      <p style="font-size:12px;color:var(--text-secondary);margin:0 0 6px;">Quantos pedidos por dia você emite, em média?</p>
+      <select style="margin-bottom:20px;">
+        <option>Menos de 10</option>
+        <option selected>Entre 10 e 20</option>
+        <option>Entre 20 e 50</option>
+        <option>Mais de 50</option>
+      </select>
+      <div style="display:flex;gap:8px;">
+        <button onclick="goTo(1)">Voltar</button>
+        <button onclick="goTo(3)" style="border-color:var(--border-accent);color:var(--text-accent);">Enviar solicitação</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="stg" data-stg="3">
+    <p class="lbl">4. Confirmação de envio</p>
+    <div class="card" style="text-align:center;">
+      <i class="ti ti-clock-hour-4" style="font-size:28px;color:var(--text-warning);"></i>
+      <p style="font-weight:500;font-size:16px;margin:14px 0 4px;">Solicitação enviada para avaliação</p>
+      <p style="font-size:14px;color:var(--text-secondary);margin:0 auto 16px;max-width:380px;">Nossa equipe vai validar as informações e entrar em contato em até 1 dia útil.</p>
+      <div style="display:flex;gap:8px;justify-content:center;">
+        <button onclick="goTo(2)">Voltar</button>
+        <button onclick="goTo(4)">Ver desfecho</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="stg" data-stg="4">
+    <p class="lbl">5. Desfecho da avaliação</p>
+    <div style="display:flex;gap:6px;justify-content:center;margin-bottom:14px;">
+      <button class="pill sel" onclick="setOutc('ok',this)">Aceito</button>
+      <button class="pill" onclick="setOutc('no',this)">Recusado</button>
+    </div>
+    <div class="card">
+      <div class="outc on" id="outc-ok" style="text-align:center;">
+        <span style="width:8px;height:8px;border-radius:50%;background:var(--fill-success);display:inline-block;margin-bottom:10px;"></span>
+        <p style="font-weight:500;font-size:15px;margin:0 0 6px;">Coleta ativa</p>
+        <p style="font-size:14px;color:var(--text-secondary);margin:0 auto 16px;max-width:340px;">Confirmada por telefone. Próxima coleta: quinta-feira, entre 13h e 16h30.</p>
+        <button onclick="goTo(5)">Ir para o dashboard</button>
+      </div>
+      <div class="outc" id="outc-no" style="text-align:center;">
+        <i class="ti ti-x" style="font-size:22px;color:var(--text-danger);"></i>
+        <p style="font-weight:500;font-size:15px;margin:10px 0 6px;">Não foi possível ativar a coleta</p>
+        <p style="font-size:14px;color:var(--text-secondary);margin:0 auto 8px;max-width:360px;">Fora da área de cobertura atual para esta transportadora.</p>
+        <div style="display:flex;gap:8px;justify-content:center;margin-top:10px;">
+          <button>Ver pontos de postagem</button>
+          <button style="border-color:var(--border-accent);color:var(--text-accent);">Nova avaliação</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="stg" data-stg="5">
+    <p class="lbl">6. Dashboard com o novo item</p>
+    <div style="display:flex;flex-direction:column;gap:8px;">
+      <div class="card" style="padding:12px 16px;display:flex;align-items:center;justify-content:space-between;">
+        <div style="display:flex;align-items:center;gap:10px;"><i class="ti ti-file-text" style="font-size:16px;color:var(--text-secondary);"></i><span style="font-size:14px;">Gerenciar etiquetas</span></div>
+        <i class="ti ti-chevron-right" style="font-size:16px;color:var(--text-muted);"></i>
+      </div>
+      <div class="card" style="padding:12px 16px;display:flex;align-items:center;justify-content:space-between;">
+        <div style="display:flex;align-items:center;gap:10px;"><i class="ti ti-building-store" style="font-size:16px;color:var(--text-secondary);"></i><span style="font-size:14px;">Correios e mais transportadoras</span></div>
+        <i class="ti ti-chevron-right" style="font-size:16px;color:var(--text-muted);"></i>
+      </div>
+      <div class="card" style="padding:12px 16px;display:flex;align-items:center;justify-content:space-between;cursor:pointer;border-color:var(--border-accent);" onclick="goTo(6)">
+        <div style="display:flex;align-items:center;gap:10px;"><i class="ti ti-truck" style="font-size:16px;color:var(--text-secondary);"></i><span style="font-size:14px;">Gerenciador de coletas</span></div>
+        <div style="display:flex;align-items:center;gap:8px;"><span style="background:var(--bg-danger);color:var(--text-danger);font-size:11px;padding:2px 8px;border-radius:10px;">2</span><i class="ti ti-chevron-right" style="font-size:16px;color:var(--text-muted);"></i></div>
+      </div>
+      <div class="card" style="padding:12px 16px;display:flex;align-items:center;justify-content:space-between;">
+        <div style="display:flex;align-items:center;gap:10px;"><i class="ti ti-settings" style="font-size:16px;color:var(--text-secondary);"></i><span style="font-size:14px;">Configurações</span></div>
+        <i class="ti ti-chevron-right" style="font-size:16px;color:var(--text-muted);"></i>
+      </div>
+    </div>
+    <div class="footer-nav">
+      <button onclick="goTo(4)">Voltar</button>
+    </div>
+  </div>
+
+  <div class="stg" data-stg="6">
+    <p class="lbl">7. Gerenciador de coletas</p>
+    <div class="card">
+      <div class="row2">
+        <div class="stat"><p class="k">Próxima coleta</p><p class="v">Hoje, 13h-16h30</p></div>
+        <div class="stat"><p class="k">Corte encerra em</p><p class="v">2h15</p></div>
+      </div>
+      <div style="display:flex;align-items:flex-start;gap:10px;padding:10px 0;border-top:0.5px solid var(--border);">
+        <i class="ti ti-alert-triangle" style="font-size:16px;color:var(--text-danger);margin-top:1px;"></i>
+        <p style="font-size:13px;margin:0;">2 pedidos ficaram fora da coleta de ontem</p>
+      </div>
+      <div style="display:flex;align-items:flex-start;gap:10px;padding:10px 0;border-top:0.5px solid var(--border);">
+        <i class="ti ti-clock" style="font-size:16px;color:var(--text-warning);margin-top:1px;"></i>
+        <p style="font-size:13px;margin:0;">5 pedidos vão perder a coleta de amanhã se não emitidos até 23h59</p>
+      </div>
+      <div style="display:flex;align-items:flex-start;gap:10px;padding:10px 0;border-top:0.5px solid var(--border);">
+        <i class="ti ti-circle-check" style="font-size:16px;color:var(--text-success);margin-top:1px;"></i>
+        <p style="font-size:13px;margin:0;">Todos os pedidos previstos para ontem foram coletados</p>
+      </div>
+    </div>
+    <div class="footer-nav">
+      <button onclick="goTo(0)">Reiniciar</button>
+    </div>
+  </div>
+
+  <div class="dots">
+    <button class="dot on" data-dot="0" onclick="goTo(0)" aria-label="Tela 1"></button>
+    <button class="dot" data-dot="1" onclick="goTo(1)" aria-label="Tela 2"></button>
+    <button class="dot" data-dot="2" onclick="goTo(2)" aria-label="Tela 3"></button>
+    <button class="dot" data-dot="3" onclick="goTo(3)" aria-label="Tela 4"></button>
+    <button class="dot" data-dot="4" onclick="goTo(4)" aria-label="Tela 5"></button>
+    <button class="dot" data-dot="5" onclick="goTo(5)" aria-label="Tela 6"></button>
+    <button class="dot" data-dot="6" onclick="goTo(6)" aria-label="Tela 7"></button>
+  </div>
+
+</div>
+
+<script>
+function goTo(i) {
+  document.querySelectorAll('.stg').forEach(function(el) { el.classList.toggle('active', el.dataset.stg == i); });
+  document.querySelectorAll('.dot').forEach(function(el) { el.classList.toggle('on', el.dataset.dot == i); });
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+function setOutc(v, btn) {
+  document.querySelectorAll('.pill').forEach(function(el) { el.classList.remove('sel'); });
+  btn.classList.add('sel');
+  document.getElementById('outc-ok').classList.toggle('on', v == 'ok');
+  document.getElementById('outc-no').classList.toggle('on', v == 'no');
+}
+</script>
+
+</body>
+</html>
