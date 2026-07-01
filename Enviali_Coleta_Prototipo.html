@@ -165,10 +165,25 @@
         <p style="font-weight:500;font-size:16px;margin:0;">Coleta no endereço da loja</p>
       </div>
       <p style="font-size:14px;color:var(--text-secondary);margin:0 0 16px;">Um motorista busca seus pacotes na loja. Você não precisa ir a um ponto de postagem.</p>
-      <div style="display:flex;flex-direction:column;gap:8px;margin-bottom:20px;">
-        <p style="font-size:13px;margin:0;"><i class="ti ti-calendar" style="font-size:15px;margin-right:6px;color:var(--text-secondary);"></i>Coletas acontecem de segunda a sexta, normalmente entre 13h e 16h30</p>
-        <p style="font-size:13px;margin:0;"><i class="ti ti-coin" style="font-size:15px;margin-right:6px;color:var(--text-secondary);"></i>Você não paga nada, o consumidor já pagou todos os custos do frete na finalização do pedido</p>
-        <p style="font-size:13px;margin:0;"><i class="ti ti-map-pin" style="font-size:15px;margin-right:6px;color:var(--text-secondary);"></i>Você recebe o código de rastreio após a coleta dos pacotes</p>
+      <div style="border-top:0.5px solid var(--border);margin-bottom:20px;">
+        <div style="display:flex;align-items:center;gap:12px;padding:12px 0;border-bottom:0.5px solid var(--border);">
+          <div style="width:28px;height:28px;border-radius:7px;background:var(--bg-accent);display:flex;align-items:center;justify-content:center;flex-shrink:0;">
+            <i class="ti ti-calendar" style="font-size:15px;color:var(--text-accent);"></i>
+          </div>
+          <p style="font-size:13px;margin:0;">Coletas acontecem de segunda a sexta, normalmente entre 13h e 16h30</p>
+        </div>
+        <div style="display:flex;align-items:center;gap:12px;padding:12px 0;border-bottom:0.5px solid var(--border);">
+          <div style="width:28px;height:28px;border-radius:7px;background:var(--bg-accent);display:flex;align-items:center;justify-content:center;flex-shrink:0;">
+            <i class="ti ti-coin" style="font-size:15px;color:var(--text-accent);"></i>
+          </div>
+          <p style="font-size:13px;margin:0;">Você não paga nada, pois o consumidor já pagou o frete na finalização do pedido</p>
+        </div>
+        <div style="display:flex;align-items:center;gap:12px;padding:12px 0;">
+          <div style="width:28px;height:28px;border-radius:7px;background:var(--bg-accent);display:flex;align-items:center;justify-content:center;flex-shrink:0;">
+            <i class="ti ti-map-pin" style="font-size:15px;color:var(--text-accent);"></i>
+          </div>
+          <p style="font-size:13px;margin:0;">O código de rastreio já vem na etiqueta, e os status começam a aparecer assim que a coleta é realizada</p>
+        </div>
       </div>
       <div style="display:flex;gap:8px;">
         <button onclick="goTo(0)">Voltar</button>
