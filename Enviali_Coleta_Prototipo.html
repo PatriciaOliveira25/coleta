@@ -124,6 +124,10 @@
   .stat p.v { font-size: 13px; margin: 0; }
   .row2 { display: grid; grid-template-columns: repeat(2, minmax(0,1fr)); gap: 10px; margin-bottom: 14px; }
   .footer-nav { display: flex; justify-content: center; gap: 8px; margin-top: 16px; }
+  .fpill { padding: 5px 12px; border-radius: 6px; font-size: 13px; cursor: pointer; border: 0.5px solid var(--border); background: var(--surface-2); }
+  .fpill.sel { border-color: var(--border-accent); color: var(--text-accent); }
+  .al { display: none; }
+  .al.show { display: flex; }
 </style>
 </head>
 <body>
@@ -284,17 +288,32 @@
         <div class="stat"><p class="k">Próxima coleta</p><p class="v">Hoje, 13h-16h30</p></div>
         <div class="stat"><p class="k">Corte encerra em</p><p class="v">2h15</p></div>
       </div>
-      <div style="display:flex;align-items:flex-start;gap:10px;padding:10px 0;border-top:0.5px solid var(--border);">
+
+      <div style="display:flex;gap:6px;margin-bottom:14px;">
+        <button class="fpill sel" onclick="filt('all',this)">Todas</button>
+        <button class="fpill" onclick="filt('jt',this)">J&amp;T Express</button>
+        <button class="fpill" onclick="filt('loggi',this)">Loggi</button>
+      </div>
+
+      <div class="al show" data-c="jt" style="display:flex;align-items:flex-start;gap:10px;padding:10px 0;border-top:0.5px solid var(--border);">
         <i class="ti ti-alert-triangle" style="font-size:16px;color:var(--text-danger);margin-top:1px;"></i>
-        <p style="font-size:13px;margin:0;">2 pedidos ficaram fora da coleta de ontem</p>
+        <div><p style="font-size:13px;margin:0;">2 pedidos ficaram fora da coleta de ontem</p><p style="font-size:11px;color:var(--text-muted);margin:2px 0 0;">J&amp;T Express</p></div>
       </div>
-      <div style="display:flex;align-items:flex-start;gap:10px;padding:10px 0;border-top:0.5px solid var(--border);">
+      <div class="al show" data-c="loggi" style="display:flex;align-items:flex-start;gap:10px;padding:10px 0;border-top:0.5px solid var(--border);">
         <i class="ti ti-clock" style="font-size:16px;color:var(--text-warning);margin-top:1px;"></i>
-        <p style="font-size:13px;margin:0;">5 pedidos vão perder a coleta de amanhã se não emitidos até 23h59</p>
+        <div><p style="font-size:13px;margin:0;">5 pedidos vão perder a coleta de amanhã se não emitidos até 23h59</p><p style="font-size:11px;color:var(--text-muted);margin:2px 0 0;">Loggi</p></div>
       </div>
-      <div style="display:flex;align-items:flex-start;gap:10px;padding:10px 0;border-top:0.5px solid var(--border);">
+      <div class="al show" data-c="jt" style="display:flex;align-items:flex-start;gap:10px;padding:10px 0;border-top:0.5px solid var(--border);">
         <i class="ti ti-circle-check" style="font-size:16px;color:var(--text-success);margin-top:1px;"></i>
-        <p style="font-size:13px;margin:0;">Todos os pedidos previstos para ontem foram coletados</p>
+        <div><p style="font-size:13px;margin:0;">Todos os pedidos previstos para ontem foram coletados</p><p style="font-size:11px;color:var(--text-muted);margin:2px 0 0;">J&amp;T Express · 24 pedidos</p></div>
+      </div>
+
+      <div style="border-top:0.5px solid var(--border);margin-top:12px;padding-top:14px;">
+        <p style="font-size:13px;color:var(--text-secondary);margin:0 0 8px;">Status por transportadora</p>
+        <div class="row2" style="margin-bottom:0;">
+          <div class="stat"><p class="k">J&amp;T Express</p><p class="v" style="color:var(--text-success);">Coleta ativa</p></div>
+          <div class="stat"><p class="k">Loggi</p><p class="v" style="color:var(--text-success);">Coleta ativa</p></div>
+        </div>
       </div>
     </div>
     <div class="footer-nav">
@@ -325,6 +344,13 @@ function setOutc(v, btn) {
   btn.classList.add('sel');
   document.getElementById('outc-ok').classList.toggle('on', v == 'ok');
   document.getElementById('outc-no').classList.toggle('on', v == 'no');
+}
+function filt(c, btn) {
+  document.querySelectorAll('.fpill').forEach(function(el) { el.classList.remove('sel'); });
+  btn.classList.add('sel');
+  document.querySelectorAll('.al').forEach(function(el) {
+    el.classList.toggle('show', c == 'all' || el.dataset.c == c);
+  });
 }
 </script>
 
