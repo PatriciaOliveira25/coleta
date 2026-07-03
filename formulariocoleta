@@ -1,0 +1,520 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Enviali Coleta — Cadastre sua loja</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Sora:wght@500;600;700&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --ink: #1a1a1a;
+    --ink-soft: #5f5e5a;
+    --ink-muted: #8a8880;
+    --paper: #f4f3ee;
+    --paper-raised: #ffffff;
+    --line: #e3e1d8;
+    --teal-900: #04342c;
+    --teal-700: #0f6e56;
+    --teal-500: #1d9e75;
+    --teal-100: #e1f5ee;
+    --teal-50: #f2faf7;
+    --danger: #a32d2d;
+  }
+  * { box-sizing: border-box; }
+  html, body {
+    margin: 0;
+    background: var(--paper);
+    color: var(--ink);
+    font-family: 'Inter', -apple-system, sans-serif;
+    -webkit-font-smoothing: antialiased;
+  }
+  h1, h2, h3, .display { font-family: 'Sora', 'Inter', sans-serif; }
+
+  .page {
+    min-height: 100vh;
+    display: grid;
+    grid-template-columns: 1.05fr 1fr;
+  }
+  @media (max-width: 940px) {
+    .page { grid-template-columns: 1fr; }
+  }
+
+  .story {
+    background: var(--teal-900);
+    color: var(--teal-50);
+    padding: 56px 56px 40px;
+    position: relative;
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+  }
+  @media (max-width: 940px) { .story { padding: 40px 28px 32px; } }
+  @media (max-width: 560px) { .story { padding: 32px 20px 28px; } }
+
+  .brand {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    font-family: 'Sora', sans-serif;
+    font-weight: 600;
+    font-size: 18px;
+    letter-spacing: -0.01em;
+    margin-bottom: 64px;
+  }
+  .brand svg { flex-shrink: 0; }
+
+  .eyebrow {
+    font-size: 12px;
+    text-transform: uppercase;
+    letter-spacing: 0.12em;
+    color: var(--teal-500);
+    font-weight: 600;
+    margin: 0 0 18px;
+  }
+  .story h1 {
+    font-size: clamp(30px, 3.6vw, 42px);
+    line-height: 1.12;
+    font-weight: 700;
+    letter-spacing: -0.02em;
+    margin: 0 0 20px;
+    max-width: 480px;
+  }
+  .story h1 em {
+    font-style: normal;
+    color: var(--teal-500);
+  }
+  .story p.lede {
+    font-size: 16px;
+    line-height: 1.65;
+    color: #c9d9d2;
+    max-width: 420px;
+    margin: 0 0 44px;
+  }
+
+  .route-wrap {
+    position: relative;
+    height: 64px;
+    max-width: 460px;
+    margin-bottom: 48px;
+  }
+  .route-line {
+    position: absolute;
+    top: 50%;
+    left: 0;
+    right: 0;
+    height: 0;
+    border-top: 2px dashed rgba(29, 158, 117, 0.4);
+    transform: translateY(-50%);
+  }
+  .route-dot {
+    position: absolute;
+    top: 50%;
+    width: 9px;
+    height: 9px;
+    border-radius: 50%;
+    background: var(--teal-500);
+    transform: translate(-50%, -50%);
+  }
+  .route-dot.start { left: 0; }
+  .route-dot.end { left: 100%; }
+  .route-truck {
+    position: absolute;
+    top: 50%;
+    left: 0;
+    transform: translate(-50%, -50%);
+    animation: drive 5.5s ease-in-out infinite;
+  }
+  @keyframes drive {
+    0%, 8% { left: 4%; }
+    50% { left: 96%; }
+    92%, 100% { left: 4%; }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .route-truck { animation: none; left: 50%; }
+  }
+
+  .facts {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+    margin-top: auto;
+  }
+  .step {
+    display: flex;
+    align-items: flex-start;
+    gap: 13px;
+  }
+  .step .num {
+    width: 22px;
+    height: 22px;
+    border-radius: 50%;
+    border: 1.5px solid rgba(29, 158, 117, 0.5);
+    color: var(--teal-500);
+    font-family: 'Sora', sans-serif;
+    font-size: 11px;
+    font-weight: 600;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    margin-top: 1px;
+  }
+  .step p {
+    margin: 0;
+    font-size: 13.5px;
+    line-height: 1.5;
+    color: #d7e4de;
+  }
+  .step strong { color: #fff; font-weight: 500; }
+
+  .formside {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 56px 48px;
+  }
+  @media (max-width: 940px) { .formside { padding: 40px 28px 64px; } }
+  @media (max-width: 560px) { .formside { padding: 32px 18px 56px; } }
+
+  .card {
+    width: 100%;
+    max-width: 440px;
+    background: var(--paper-raised);
+    border: 1px solid var(--line);
+    border-radius: 18px;
+    padding: 36px 34px;
+    box-shadow: 0 1px 2px rgba(4, 52, 44, 0.04), 0 12px 32px -16px rgba(4, 52, 44, 0.14);
+  }
+  @media (max-width: 560px) { .card { padding: 28px 22px; border-radius: 14px; } }
+
+  .card h2 {
+    font-size: 21px;
+    font-weight: 600;
+    letter-spacing: -0.01em;
+    margin: 0 0 6px;
+  }
+  .card p.sub {
+    font-size: 13.5px;
+    color: var(--ink-soft);
+    margin: 0 0 28px;
+    line-height: 1.5;
+  }
+
+  .field { margin-bottom: 16px; }
+  .field label {
+    display: block;
+    font-size: 12.5px;
+    font-weight: 600;
+    color: var(--ink-soft);
+    margin-bottom: 6px;
+  }
+  .field input {
+    width: 100%;
+    font-family: inherit;
+    font-size: 14.5px;
+    padding: 11px 13px;
+    border: 1.5px solid var(--line);
+    border-radius: 10px;
+    background: var(--paper);
+    color: var(--ink);
+    transition: border-color .15s, box-shadow .15s;
+  }
+  .field input::placeholder { color: var(--ink-muted); }
+  .field input:focus {
+    outline: none;
+    border-color: var(--teal-500);
+    box-shadow: 0 0 0 3px var(--teal-100);
+    background: #fff;
+  }
+  .row2 { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+  @media (max-width: 400px) { .row2 { grid-template-columns: 1fr; } }
+
+  .days {
+    display: flex;
+    gap: 7px;
+    flex-wrap: wrap;
+  }
+  .day {
+    flex: 1;
+    min-width: 46px;
+    text-align: center;
+    padding: 10px 0;
+    border-radius: 9px;
+    border: 1.5px solid var(--line);
+    background: var(--paper);
+    font-size: 13px;
+    font-weight: 600;
+    color: var(--ink-soft);
+    cursor: pointer;
+    user-select: none;
+    transition: all .12s;
+  }
+  .day.on {
+    background: var(--teal-700);
+    border-color: var(--teal-700);
+    color: #fff;
+  }
+  .day:hover:not(.on) { border-color: var(--teal-500); color: var(--ink); }
+
+  .window-note {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    background: var(--teal-50);
+    border: 1px solid var(--teal-100);
+    border-radius: 10px;
+    padding: 11px 13px;
+    margin: 20px 0 22px;
+  }
+  .window-note svg { flex-shrink: 0; }
+  .window-note p {
+    margin: 0;
+    font-size: 12.5px;
+    line-height: 1.5;
+    color: var(--teal-700);
+  }
+  .window-note strong { color: var(--teal-900); }
+
+  .submit-btn {
+    width: 100%;
+    font-family: 'Sora', sans-serif;
+    font-size: 15px;
+    font-weight: 600;
+    color: #fff;
+    background: var(--teal-700);
+    border: none;
+    border-radius: 11px;
+    padding: 14px 0;
+    cursor: pointer;
+    transition: background .15s, transform .1s;
+    letter-spacing: -0.005em;
+  }
+  .submit-btn:hover { background: var(--teal-900); }
+  .submit-btn:active { transform: scale(0.99); }
+
+  .fineprint {
+    text-align: center;
+    font-size: 11.5px;
+    color: var(--ink-muted);
+    margin: 14px 0 0;
+    line-height: 1.5;
+  }
+
+  .error-msg {
+    font-size: 12px;
+    color: var(--danger);
+    margin: -10px 0 14px;
+    display: none;
+  }
+  .error-msg.show { display: block; }
+
+  .success {
+    display: none;
+    text-align: center;
+    padding: 12px 4px 4px;
+  }
+  .success.show { display: block; }
+  .success .check {
+    width: 52px;
+    height: 52px;
+    border-radius: 50%;
+    background: var(--teal-100);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin: 0 auto 18px;
+  }
+  .success h2 { margin-bottom: 10px; }
+  .success p { color: var(--ink-soft); font-size: 14px; line-height: 1.6; margin: 0 0 4px; }
+  .success .ref {
+    display: inline-block;
+    margin-top: 16px;
+    font-size: 12.5px;
+    color: var(--teal-700);
+    background: var(--teal-50);
+    padding: 6px 14px;
+    border-radius: 8px;
+    font-weight: 600;
+  }
+</style>
+</head>
+<body>
+
+<div class="page">
+
+  <div class="story">
+    <div class="brand">
+      <svg width="26" height="26" viewBox="0 0 24 24" fill="none">
+        <path d="M12 2L21 6.5V12C21 17 17.5 20.7 12 22C6.5 20.7 3 17 3 12V6.5L12 2Z" fill="#1D9E75"/>
+        <path d="M8.5 12.2L10.7 14.4L15.5 9.2" stroke="#04342C" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/>
+      </svg>
+      enviali
+    </div>
+
+    <p class="eyebrow">Coleta no endereço</p>
+    <h1>O motorista vem até <em>sua loja</em> — você não vai mais a um ponto de postagem</h1>
+    <p class="lede">Cadastre os dados da sua loja ou CD abaixo. Nossa equipe confirma a cobertura e ativa a coleta em até 1 dia útil.</p>
+
+    <div class="route-wrap" style="height:44px;margin-bottom:32px;" aria-hidden="true">
+      <div class="route-line"></div>
+      <div class="route-dot start"></div>
+      <div class="route-dot end"></div>
+      <div class="route-truck">
+        <svg width="26" height="26" viewBox="0 0 24 24" fill="none">
+          <circle cx="12" cy="12" r="12" fill="#0F6E56"/>
+          <path d="M6 14.5H8M8 14.5V9.5H13.5L16 12V14.5H17.5M8 14.5H13.5M13.5 14.5H15" stroke="#E1F5EE" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round"/>
+          <circle cx="9" cy="15.5" r="1.2" fill="#E1F5EE"/>
+          <circle cx="15.5" cy="15.5" r="1.2" fill="#E1F5EE"/>
+        </svg>
+      </div>
+    </div>
+
+    <p style="font-family:'Sora',sans-serif;font-size:12px;font-weight:600;text-transform:uppercase;letter-spacing:0.1em;color:var(--teal-500);margin:0 0 16px;">Como funciona no dia da coleta</p>
+
+    <div class="facts">
+      <div class="step">
+        <span class="num">1</span>
+        <p>O motorista passa no endereço cadastrado <strong>entre 13h e 16h30</strong> — o horário exato varia conforme a rota do dia.</p>
+      </div>
+      <div class="step">
+        <span class="num">2</span>
+        <p>O <strong>rastreamento é ativado automaticamente</strong> assim que a coleta acontece no seu endereço.</p>
+      </div>
+      <div class="step">
+        <span class="num">3</span>
+        <p>O <strong>prazo de entrega</strong> passa a contar a partir da data da coleta, conforme o SLA da transportadora escolhida.</p>
+      </div>
+    </div>
+  </div>
+
+  <div class="formside">
+    <div class="card">
+
+      <form id="coleta-form">
+        <h2>Cadastre sua loja para a coleta</h2>
+        <p class="sub">Leva menos de 2 minutos. Confirmamos os dados antes de qualquer coisa mudar no seu envio.</p>
+
+        <div class="field">
+          <label for="loja">Nome da loja ou CD</label>
+          <input id="loja" name="loja" type="text" placeholder="Ex: Loja Centro — Depósito 2" required>
+        </div>
+
+        <div class="field">
+          <label for="endereco">Endereço de coleta</label>
+          <input id="endereco" name="endereco" type="text" placeholder="Rua, número, bairro" required>
+        </div>
+
+        <div class="row2">
+          <div class="field">
+            <label for="cidade">Cidade</label>
+            <input id="cidade" name="cidade" type="text" placeholder="São Paulo" required>
+          </div>
+          <div class="field">
+            <label for="cep">CEP</label>
+            <input id="cep" name="cep" type="text" placeholder="00000-000" required>
+          </div>
+        </div>
+
+        <div class="row2">
+          <div class="field">
+            <label for="responsavel">Responsável no local</label>
+            <input id="responsavel" name="responsavel" type="text" placeholder="Nome completo" required>
+          </div>
+          <div class="field">
+            <label for="telefone">Telefone</label>
+            <input id="telefone" name="telefone" type="tel" placeholder="(11) 99999-0000" required>
+          </div>
+        </div>
+
+        <div class="field">
+          <label for="email">E-mail para contato</label>
+          <input id="email" name="email" type="email" placeholder="voce@sualoja.com.br" required>
+        </div>
+
+        <div class="field">
+          <label>Dias desejados para a coleta</label>
+          <div class="days" id="days-group">
+            <div class="day on" data-d="seg">Seg</div>
+            <div class="day on" data-d="ter">Ter</div>
+            <div class="day on" data-d="qua">Qua</div>
+            <div class="day on" data-d="qui">Qui</div>
+            <div class="day on" data-d="sex">Sex</div>
+          </div>
+        </div>
+        <p class="error-msg" id="days-error">Selecione pelo menos um dia.</p>
+
+        <div class="window-note">
+          <svg width="17" height="17" viewBox="0 0 24 24" fill="none"><circle cx="12" cy="12" r="9" stroke="#0F6E56" stroke-width="1.8"/><path d="M12 7V12L15.5 14" stroke="#0F6E56" stroke-width="1.8" stroke-linecap="round"/></svg>
+          <p>A coleta acontece <strong>entre 13h e 16h30</strong>, conforme a rota do dia. Emita a etiqueta até <strong>23h59 do dia anterior</strong> para entrar na rota.</p>
+        </div>
+
+        <button type="submit" class="submit-btn">Enviar cadastro</button>
+        <p class="fineprint">Ao enviar, nossa equipe confirma a cobertura e entra em contato em até 1 dia útil.</p>
+      </form>
+
+      <div class="success" id="success-block">
+        <div class="check"><svg width="24" height="24" viewBox="0 0 24 24" fill="none"><path d="M5 12L10 17L19 7" stroke="#0F6E56" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+        <h2>Cadastro recebido</h2>
+        <p>Nossa equipe vai validar o endereço e a cobertura na sua região.</p>
+        <p>Você recebe a confirmação por e-mail em até <strong>1 dia útil</strong>.</p>
+        <span class="ref" id="ref-code">Protocolo: —</span>
+      </div>
+
+    </div>
+  </div>
+
+</div>
+
+<script>
+document.querySelectorAll('.day').forEach(function(d) {
+  d.addEventListener('click', function() { d.classList.toggle('on'); });
+});
+
+var form = document.getElementById('coleta-form');
+var submitBtn = form.querySelector('.submit-btn');
+
+form.addEventListener('submit', function(e) {
+  e.preventDefault();
+
+  var anyDay = document.querySelectorAll('.day.on').length > 0;
+  var errorEl = document.getElementById('days-error');
+  if (!anyDay) {
+    errorEl.classList.add('show');
+    return;
+  }
+  errorEl.classList.remove('show');
+
+  var dias = Array.from(document.querySelectorAll('.day.on')).map(function(d) { return d.dataset.d; }).join(', ');
+  var formData = new FormData(form);
+  formData.append('dias_desejados', dias);
+
+  submitBtn.disabled = true;
+  submitBtn.textContent = 'Enviando...';
+
+  fetch('https://formspree.io/f/maqgabpn', {
+    method: 'POST',
+    body: formData,
+    headers: { 'Accept': 'application/json' }
+  })
+    .then(function(response) {
+      if (response.ok) {
+        var ref = 'CLT-' + Math.floor(100000 + Math.random() * 900000);
+        document.getElementById('ref-code').textContent = 'Protocolo: ' + ref;
+        form.style.display = 'none';
+        document.getElementById('success-block').classList.add('show');
+      } else {
+        throw new Error('Falha no envio');
+      }
+    })
+    .catch(function() {
+      submitBtn.disabled = false;
+      submitBtn.textContent = 'Enviar cadastro';
+      alert('Não foi possível enviar agora. Tente novamente em instantes.');
+    });
+});
+</script>
+
+</body>
+</html>
