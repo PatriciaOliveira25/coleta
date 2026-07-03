@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Protótipo — Enviali Coleta</title>
+<title>Protótipo — Coleta em Gerenciando etiquetas</title>
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/tabler-icons/2.44.0/iconfont/tabler-icons.min.css">
 <style>
   :root {
@@ -24,7 +24,6 @@
     --bg-danger: #fcebeb;
     --bg-warning: #faeeda;
     --bg-success: #eaf3de;
-    --fill-success: #639922;
     --radius: 8px;
   }
   @media (prefers-color-scheme: dark) {
@@ -51,335 +50,380 @@
     font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
     padding: 32px 16px 64px;
   }
-  .wrap { max-width: 700px; margin: 0 auto; }
-  .top {
-    text-align: center;
-    margin-bottom: 28px;
-  }
-  .top p.eyebrow {
-    font-size: 12px;
-    text-transform: uppercase;
-    letter-spacing: 0.04em;
-    color: var(--text-muted);
-    margin: 0 0 6px;
-  }
+  .wrap { max-width: 1040px; margin: 0 auto; }
+  .top { text-align: center; margin-bottom: 24px; }
+  .top p.eyebrow { font-size: 12px; text-transform: uppercase; letter-spacing: 0.04em; color: var(--text-muted); margin: 0 0 6px; }
   .top h1 { font-size: 22px; font-weight: 500; margin: 0 0 6px; }
   .top p.sub { font-size: 14px; color: var(--text-secondary); margin: 0; }
-  .stg { display: none; }
-  .stg.active { display: block; }
-  .lbl {
-    font-size: 11px;
-    color: var(--text-muted);
-    margin: 0 0 10px;
-    text-transform: uppercase;
-    letter-spacing: 0.03em;
-  }
-  .card {
-    background: var(--surface-2);
-    border: 0.5px solid var(--border);
-    border-radius: 12px;
-    padding: 1.25rem;
-  }
-  button {
-    font-family: inherit;
-    font-size: 14px;
-    background: var(--surface-2);
-    border: 0.5px solid var(--border-strong);
-    border-radius: var(--radius);
-    padding: 8px 16px;
-    cursor: pointer;
-    color: var(--text-primary);
-  }
+  .card { background: var(--surface-2); border: 0.5px solid var(--border); border-radius: 12px; padding: 1.25rem; }
+  button { font-family: inherit; font-size: 14px; background: var(--surface-2); border: 0.5px solid var(--border-strong); border-radius: var(--radius); padding: 8px 16px; cursor: pointer; color: var(--text-primary); }
   button:hover { background: var(--surface-1); }
-  input, select {
-    font-family: inherit;
-    font-size: 14px;
-    width: 100%;
-    padding: 8px 10px;
-    border: 0.5px solid var(--border);
-    border-radius: var(--radius);
-    background: var(--surface-2);
-    color: var(--text-primary);
-  }
+  input { font-family: inherit; font-size: 14px; width: 100%; padding: 8px 10px; border: 0.5px solid var(--border); border-radius: var(--radius); background: var(--surface-2); color: var(--text-primary); }
+  table { width: 100%; border-collapse: collapse; }
+  th { text-align: left; font-size: 12px; color: var(--text-secondary); font-weight: 500; padding: 8px 4px; }
+  td { padding: 10px 4px; font-size: 13px; border-bottom: 0.5px solid var(--border); vertical-align: top; }
+  tr:last-child td { border-bottom: none; }
+  .tab-btn { font-size: 14px; color: var(--text-secondary); background: none; border: none; padding: 0 0 10px; margin-right: 20px; cursor: pointer; border-bottom: 2px solid transparent; }
+  .tab-btn.active { color: var(--text-accent); font-weight: 500; border-bottom-color: var(--text-accent); }
+  .tabs-row { display: flex; border-bottom: 0.5px solid var(--border); margin-bottom: 14px; }
+  .badge { font-size: 11px; padding: 2px 8px; border-radius: 10px; display: inline-block; }
+  .eye { font-size: 15px; color: var(--text-muted); cursor: pointer; }
+  .timeline-row { display: flex; gap: 10px; }
+  .timeline-dot-line { display: flex; flex-direction: column; align-items: center; }
+  .timeline-line { width: 1.5px; flex: 1; min-height: 16px; background: var(--border); }
+  .timeline-line.done { background: var(--border-strong); }
+  .nav-btn { font-size: 13px; }
+  .nav-btn.active { border-color: var(--border-accent); color: var(--text-accent); }
+  .nav-card:hover { background: var(--surface-1); }
   .row { display: flex; gap: 8px; margin-bottom: 10px; }
   .field { flex: 1; }
   .field label { font-size: 12px; color: var(--text-secondary); display: block; margin-bottom: 4px; }
-  .chip {
-    display: inline-flex; align-items: center; justify-content: center;
-    padding: 6px 10px; border-radius: 6px; border: 0.5px solid var(--border);
-    font-size: 13px; cursor: pointer; background: var(--surface-2);
-  }
+  .chip { display: inline-flex; align-items: center; justify-content: center; padding: 6px 10px; border-radius: 6px; border: 0.5px solid var(--border); font-size: 13px; cursor: pointer; background: var(--surface-2); }
   .chip.on { background: var(--bg-accent); color: var(--text-accent); border-color: var(--border-accent); }
-  .pill { padding: 5px 12px; border-radius: 6px; font-size: 13px; cursor: pointer; border: 0.5px solid var(--border); background: var(--surface-2); }
-  .pill.sel { border-color: var(--border-accent); color: var(--text-accent); }
-  .outc { display: none; }
-  .outc.on { display: block; }
-  .dots { display: flex; gap: 6px; justify-content: center; margin-top: 20px; }
-  .dot { width: 8px; height: 8px; border-radius: 50%; background: var(--border-strong); cursor: pointer; border: none; padding: 0; }
-  .dot.on { background: var(--text-accent); }
-  .stat {
-    background: var(--surface-1); border-radius: var(--radius); padding: 10px 12px;
-  }
-  .stat p.k { font-size: 11px; color: var(--text-muted); margin: 0 0 2px; }
-  .stat p.v { font-size: 13px; margin: 0; }
-  .row2 { display: grid; grid-template-columns: repeat(2, minmax(0,1fr)); gap: 10px; margin-bottom: 14px; }
-  .footer-nav { display: flex; justify-content: center; gap: 8px; margin-top: 16px; }
-  .fpill { padding: 5px 12px; border-radius: 6px; font-size: 13px; cursor: pointer; border: 0.5px solid var(--border); background: var(--surface-2); }
-  .fpill.sel { border-color: var(--border-accent); color: var(--text-accent); }
-  .al { display: none; }
-  .al.show { display: flex; }
 </style>
 </head>
 <body>
 <div class="wrap">
 
   <div class="top">
-    <p class="eyebrow">Protótipo clicável</p>
-    <h1>Enviali Coleta</h1>
-    <p class="sub">Navegue pelas 7 telas usando os botões de cada uma ou os pontos abaixo.</p>
+    <p class="eyebrow">Protótipo clicável — piloto controlado</p>
+    <h1>Coleta dentro do Enviali</h1>
+    <p class="sub">Sem menu novo, sem solicitação, sem escolha de horário. A coleta é só um atributo, visível para lojistas já habilitados.</p>
   </div>
 
-  <div class="stg active" data-stg="0">
-    <p class="lbl">1. Lista de transportadoras</p>
-    <div class="card" style="display:flex;align-items:center;justify-content:space-between;gap:12px;">
-      <div style="display:flex;align-items:center;gap:12px;">
-        <div style="width:40px;height:40px;border-radius:8px;background:var(--bg-accent);display:flex;align-items:center;justify-content:center;font-weight:500;font-size:12px;color:var(--text-accent);">J&amp;T</div>
-        <div>
-          <p style="font-weight:500;font-size:15px;margin:0;">J&amp;T Express</p>
-          <p style="font-size:13px;color:var(--text-secondary);margin:2px 0 0;">Serviço de envio expresso</p>
-          <div style="display:inline-flex;align-items:center;gap:4px;background:var(--bg-success);color:var(--text-success);font-size:12px;padding:2px 8px;border-radius:6px;margin-top:6px;">
-            <i class="ti ti-truck" style="font-size:14px;"></i>
-            Coleta no endereço da loja
-          </div>
-        </div>
+  <div id="view-home" class="card">
+    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:20px;">
+      <div style="display:flex;align-items:center;gap:8px;">
+        <i class="ti ti-shield-check" style="font-size:20px;color:var(--text-accent);"></i>
+        <span style="font-weight:500;font-size:16px;">enviali</span>
       </div>
-      <button onclick="goTo(1)">Configurar</button>
+      <span style="font-size:12px;border:0.5px solid var(--border-strong);border-radius:var(--radius);padding:4px 10px;color:var(--text-success);">Ativo</span>
     </div>
-  </div>
-
-  <div class="stg" data-stg="1">
-    <p class="lbl">2. Tela informativa</p>
-    <div class="card">
-      <div style="display:flex;align-items:center;gap:10px;margin-bottom:4px;">
-        <i class="ti ti-truck" style="font-size:20px;color:var(--text-success)"></i>
-        <p style="font-weight:500;font-size:16px;margin:0;">Coleta no endereço da loja</p>
-      </div>
-      <p style="font-size:14px;color:var(--text-secondary);margin:0 0 16px;">Um motorista busca seus pacotes na loja. Você não precisa ir a um ponto de postagem.</p>
-      <div style="border-top:0.5px solid var(--border);margin-bottom:20px;">
-        <div style="display:flex;align-items:center;gap:12px;padding:12px 0;border-bottom:0.5px solid var(--border);">
-          <div style="width:28px;height:28px;border-radius:7px;background:var(--bg-accent);display:flex;align-items:center;justify-content:center;flex-shrink:0;">
-            <i class="ti ti-calendar" style="font-size:15px;color:var(--text-accent);"></i>
-          </div>
-          <p style="font-size:13px;margin:0;">Coletas acontecem de segunda a sexta, normalmente entre 13h e 16h30</p>
-        </div>
-        <div style="display:flex;align-items:center;gap:12px;padding:12px 0;border-bottom:0.5px solid var(--border);">
-          <div style="width:28px;height:28px;border-radius:7px;background:var(--bg-accent);display:flex;align-items:center;justify-content:center;flex-shrink:0;">
-            <i class="ti ti-coin" style="font-size:15px;color:var(--text-accent);"></i>
-          </div>
-          <p style="font-size:13px;margin:0;">Você não paga nada, pois o consumidor já pagou o frete na finalização do pedido</p>
-        </div>
-        <div style="display:flex;align-items:center;gap:12px;padding:12px 0;">
-          <div style="width:28px;height:28px;border-radius:7px;background:var(--bg-accent);display:flex;align-items:center;justify-content:center;flex-shrink:0;">
-            <i class="ti ti-map-pin" style="font-size:15px;color:var(--text-accent);"></i>
-          </div>
-          <p style="font-size:13px;margin:0;">O código de rastreio já vem na etiqueta, e os status começam a aparecer assim que a coleta é realizada</p>
-        </div>
-      </div>
-      <div style="display:flex;gap:8px;">
-        <button onclick="goTo(0)">Voltar</button>
-        <button onclick="goTo(2)" style="border-color:var(--border-accent);color:var(--text-accent);">Solicitar coleta</button>
-      </div>
-    </div>
-  </div>
-
-  <div class="stg" data-stg="2">
-    <p class="lbl">3. Formulário de solicitação</p>
-    <div class="card">
-      <p style="font-size:13px;color:var(--text-secondary);margin:0 0 14px;">Confira os dados da loja e escolha os dias desejados.</p>
-      <div class="row">
-        <div class="field"><label>Endereço de coleta</label><input type="text" value="Rua Exemplo, 123 - Centro"></div>
-      </div>
-      <div class="row">
-        <div class="field"><label>Complemento</label><input type="text" placeholder="Sala, bloco, andar"></div>
-        <div class="field"><label>Ponto de referência</label><input type="text" placeholder="Próximo a..."></div>
-      </div>
-      <div class="row">
-        <div class="field"><label>Responsável</label><input type="text" value="Marcelo Camillo"></div>
-        <div class="field"><label>Telefone</label><input type="text" value="(11) 99999-0000"></div>
-      </div>
-      <div class="row">
-        <div class="field"><label>E-mail</label><input type="text" value="marcelo@loja.com.br"></div>
-      </div>
-      <p style="font-size:12px;color:var(--text-secondary);margin:10px 0 6px;">Dias desejados para a coleta</p>
-      <div style="display:flex;gap:6px;margin-bottom:14px;">
-        <button class="chip on" onclick="this.classList.toggle('on')">Seg</button>
-        <button class="chip" onclick="this.classList.toggle('on')">Ter</button>
-        <button class="chip on" onclick="this.classList.toggle('on')">Qua</button>
-        <button class="chip on" onclick="this.classList.toggle('on')">Qui</button>
-        <button class="chip" onclick="this.classList.toggle('on')">Sex</button>
-      </div>
-      <p style="font-size:12px;color:var(--text-secondary);margin:0 0 6px;">Quantos pedidos por dia você emite, em média?</p>
-      <select style="margin-bottom:14px;">
-        <option>Menos de 10</option>
-        <option selected>Entre 10 e 20</option>
-        <option>Entre 20 e 50</option>
-        <option>Mais de 50</option>
-      </select>
-      <p style="font-size:12px;color:var(--text-secondary);margin:0 0 6px;">Quais horários funcionam melhor para o motorista passar na sua loja?</p>
-      <div style="display:flex;gap:6px;flex-wrap:wrap;margin-bottom:8px;">
-        <button class="chip" onclick="this.classList.toggle('on')">09h às 11h</button>
-        <button class="chip" onclick="this.classList.toggle('on')">11h às 13h</button>
-        <button class="chip on" onclick="this.classList.toggle('on')">13h às 15h</button>
-        <button class="chip on" onclick="this.classList.toggle('on')">15h às 17h</button>
-      </div>
-      <p style="font-size:11px;color:var(--text-muted);margin:0 0 20px;">Escolha quantos horários quiser — quanto mais opções, maior a chance de conseguirmos atender. Se nenhum for viável, vamos sugerir uma alternativa antes de confirmar a ativação.</p>
-      <div style="display:flex;gap:8px;">
-        <button onclick="goTo(1)">Voltar</button>
-        <button onclick="goTo(3)" style="border-color:var(--border-accent);color:var(--text-accent);">Enviar solicitação</button>
-      </div>
-    </div>
-  </div>
-
-  <div class="stg" data-stg="3">
-    <p class="lbl">4. Confirmação de envio</p>
-    <div class="card" style="text-align:center;">
-      <i class="ti ti-clock-hour-4" style="font-size:28px;color:var(--text-warning);"></i>
-      <p style="font-weight:500;font-size:16px;margin:14px 0 4px;">Solicitação enviada para avaliação</p>
-      <p style="font-size:14px;color:var(--text-secondary);margin:0 auto 16px;max-width:380px;">Nossa equipe vai validar as informações e entrar em contato em até 1 dia útil.</p>
-      <div style="display:flex;gap:8px;justify-content:center;">
-        <button onclick="goTo(2)">Voltar</button>
-        <button onclick="goTo(4)">Ver desfecho</button>
-      </div>
-    </div>
-  </div>
-
-  <div class="stg" data-stg="4">
-    <p class="lbl">5. Desfecho da avaliação</p>
-    <div style="display:flex;gap:6px;justify-content:center;margin-bottom:14px;">
-      <button class="pill sel" onclick="setOutc('ok',this)">Aceito</button>
-      <button class="pill" onclick="setOutc('no',this)">Recusado</button>
-    </div>
-    <div class="card">
-      <div class="outc on" id="outc-ok" style="text-align:center;">
-        <span style="width:8px;height:8px;border-radius:50%;background:var(--fill-success);display:inline-block;margin-bottom:10px;"></span>
-        <p style="font-weight:500;font-size:15px;margin:0 0 6px;">Coleta ativa</p>
-        <p style="font-size:14px;color:var(--text-secondary);margin:0 auto 12px;max-width:360px;">Não conseguimos atender nenhum dos horários que você indicou (13h às 15h ou 15h às 17h) na sua região. Sugerimos o horário abaixo.</p>
-        <div style="background:var(--surface-1);border-radius:var(--radius);padding:12px 16px;display:inline-block;text-align:left;margin-bottom:14px;">
-          <p style="font-size:12px;color:var(--text-muted);margin:0 0 2px;">Horário confirmado</p>
-          <p style="font-size:14px;margin:0;">Entre 15h e 17h</p>
-        </div>
-        <div style="display:flex;gap:8px;justify-content:center;">
-          <button onclick="goTo(5)">Aceitar horário</button>
-        </div>
-      </div>
-      <div class="outc" id="outc-no" style="text-align:center;">
-        <i class="ti ti-x" style="font-size:22px;color:var(--text-danger);"></i>
-        <p style="font-weight:500;font-size:15px;margin:10px 0 6px;">Não foi possível ativar a coleta</p>
-        <p style="font-size:14px;color:var(--text-secondary);margin:0 auto 8px;max-width:360px;">Fora da área de cobertura atual para esta transportadora.</p>
-        <div style="display:flex;gap:8px;justify-content:center;margin-top:10px;">
-          <button>Ver pontos de postagem</button>
-          <button style="border-color:var(--border-accent);color:var(--text-accent);">Nova avaliação</button>
-        </div>
-      </div>
-    </div>
-  </div>
-
-  <div class="stg" data-stg="5">
-    <p class="lbl">6. Dashboard com o novo item</p>
     <div style="display:flex;flex-direction:column;gap:8px;">
-      <div class="card" style="padding:12px 16px;display:flex;align-items:center;justify-content:space-between;">
-        <div style="display:flex;align-items:center;gap:10px;"><i class="ti ti-file-text" style="font-size:16px;color:var(--text-secondary);"></i><span style="font-size:14px;">Gerenciar etiquetas</span></div>
+      <div class="nav-card" onclick="showView('etiquetas')" style="background:var(--surface-2);border:0.5px solid var(--border);border-radius:var(--radius);padding:12px 16px;display:flex;align-items:center;gap:10px;cursor:pointer;">
+        <i class="ti ti-file-text" style="font-size:16px;color:var(--text-secondary);"></i>
+        <span style="flex:1;font-size:14px;">Gerenciar etiquetas</span>
         <i class="ti ti-chevron-right" style="font-size:16px;color:var(--text-muted);"></i>
       </div>
-      <div class="card" style="padding:12px 16px;display:flex;align-items:center;justify-content:space-between;">
-        <div style="display:flex;align-items:center;gap:10px;"><i class="ti ti-building-store" style="font-size:16px;color:var(--text-secondary);"></i><span style="font-size:14px;">Correios e mais transportadoras</span></div>
+      <div class="nav-card" style="background:var(--surface-2);border:0.5px solid var(--border);border-radius:var(--radius);padding:12px 16px;display:flex;align-items:center;gap:10px;">
+        <i class="ti ti-calculator" style="font-size:16px;color:var(--text-secondary);"></i>
+        <span style="flex:1;font-size:14px;">Calculadora de fretes</span>
         <i class="ti ti-chevron-right" style="font-size:16px;color:var(--text-muted);"></i>
       </div>
-      <div class="card" style="padding:12px 16px;display:flex;align-items:center;justify-content:space-between;cursor:pointer;border-color:var(--border-accent);" onclick="goTo(6)">
-        <div style="display:flex;align-items:center;gap:10px;"><i class="ti ti-truck" style="font-size:16px;color:var(--text-secondary);"></i><span style="font-size:14px;">Gerenciador de coletas</span></div>
-        <div style="display:flex;align-items:center;gap:8px;"><span style="background:var(--bg-danger);color:var(--text-danger);font-size:11px;padding:2px 8px;border-radius:10px;">2</span><i class="ti ti-chevron-right" style="font-size:16px;color:var(--text-muted);"></i></div>
-      </div>
-      <div class="card" style="padding:12px 16px;display:flex;align-items:center;justify-content:space-between;">
-        <div style="display:flex;align-items:center;gap:10px;"><i class="ti ti-settings" style="font-size:16px;color:var(--text-secondary);"></i><span style="font-size:14px;">Configurações</span></div>
+      <div class="nav-card" onclick="showView('transp-lista')" style="background:var(--surface-2);border:0.5px solid var(--border);border-radius:var(--radius);padding:12px 16px;display:flex;align-items:center;gap:10px;cursor:pointer;">
+        <i class="ti ti-building-store" style="font-size:16px;color:var(--text-secondary);"></i>
+        <span style="flex:1;font-size:14px;">Correios e mais transportadoras</span>
+        <span style="background:var(--bg-success);color:var(--text-success);font-size:11px;padding:2px 8px;border-radius:10px;">Novo</span>
         <i class="ti ti-chevron-right" style="font-size:16px;color:var(--text-muted);"></i>
       </div>
-    </div>
-    <div class="footer-nav">
-      <button onclick="goTo(4)">Voltar</button>
+      <div class="nav-card" style="background:var(--surface-2);border:0.5px solid var(--border);border-radius:var(--radius);padding:12px 16px;display:flex;align-items:center;gap:10px;">
+        <i class="ti ti-settings" style="font-size:16px;color:var(--text-secondary);"></i>
+        <span style="flex:1;font-size:14px;">Configurações</span>
+        <i class="ti ti-chevron-right" style="font-size:16px;color:var(--text-muted);"></i>
+      </div>
     </div>
   </div>
 
-  <div class="stg" data-stg="6">
-    <p class="lbl">7. Gerenciador de coletas</p>
-    <div class="card">
-      <div class="row2">
-        <div class="stat"><p class="k">Próxima coleta</p><p class="v">Hoje, 13h-16h30</p></div>
-        <div class="stat"><p class="k">Corte encerra em</p><p class="v">2h15</p></div>
+  <div id="view-etiquetas" class="card" style="display:none;gap:20px;align-items:flex-start;">
+    <div style="flex:1;min-width:0;">
+      <p style="font-size:13px;color:var(--text-muted);margin:0 0 14px;"><span style="cursor:pointer;color:var(--text-accent);" onclick="showView('home')">← Resumo</span> / Gerenciando etiquetas</p>
+
+      <div class="tabs-row">
+        <button class="tab-btn" data-tab="pendente" onclick="showTab('pendente')">Pagamento de etiquetas pendente</button>
+        <button class="tab-btn active" data-tab="aguardando" onclick="showTab('aguardando')">Aguardando envio</button>
+        <button class="tab-btn" data-tab="enviadas" onclick="showTab('enviadas')">Enviadas</button>
+        <button class="tab-btn" data-tab="canceladas" onclick="showTab('canceladas')">Canceladas</button>
       </div>
 
-      <div style="display:flex;gap:6px;margin-bottom:14px;">
-        <button class="fpill sel" onclick="filt('all',this)">Todas</button>
-        <button class="fpill" onclick="filt('jt',this)">J&amp;T Express</button>
-        <button class="fpill" onclick="filt('loggi',this)">Loggi</button>
+      <div id="tab-content"></div>
+    </div>
+
+    <div id="side-panel" style="width:300px;flex-shrink:0;background:var(--surface-1);border-radius:var(--radius);padding:14px;display:none;"></div>
+  </div>
+
+  <div id="view-transp-lista" class="card" style="display:none;">
+    <p style="font-size:13px;color:var(--text-muted);margin:0 0 14px;"><span style="cursor:pointer;color:var(--text-accent);" onclick="showView('home')">← Resumo</span> / Correios e mais transportadoras</p>
+    <div style="display:flex;flex-direction:column;gap:8px;">
+      <div style="background:var(--surface-2);border:0.5px solid var(--border);border-radius:var(--radius);padding:12px 16px;display:flex;align-items:center;justify-content:space-between;cursor:pointer;" onclick="showView('transp-detalhe')">
+        <div>
+          <p style="font-size:14px;margin:0;">Loggi</p>
+          <p style="font-size:12px;color:var(--text-muted);margin:2px 0 0;">Envios rápidos e econômicos · <span style="color:var(--text-success);">Coleta habilitada nesta conta</span></p>
+        </div>
+        <span style="font-size:12px;color:var(--text-accent);">Ativo</span>
+      </div>
+      <div style="background:var(--surface-2);border:0.5px solid var(--border);border-radius:var(--radius);padding:12px 16px;display:flex;align-items:center;justify-content:space-between;cursor:pointer;" onclick="showView('transp-detalhe')">
+        <div>
+          <p style="font-size:14px;margin:0;">J&amp;T Express</p>
+          <p style="font-size:12px;color:var(--text-muted);margin:2px 0 0;">Entrega rápida em todo o Brasil · <span style="color:var(--text-success);">Coleta habilitada nesta conta</span></p>
+        </div>
+        <span style="font-size:12px;color:var(--text-accent);">Ativo</span>
+      </div>
+      <div style="background:var(--surface-2);border:0.5px solid var(--border);border-radius:var(--radius);padding:12px 16px;display:flex;align-items:center;justify-content:space-between;">
+        <div>
+          <p style="font-size:14px;margin:0;">SEDEX</p>
+          <p style="font-size:12px;color:var(--text-muted);margin:2px 0 0;">Serviço de envio expresso dos Correios</p>
+        </div>
+        <span style="font-size:12px;color:var(--text-accent);">Ativo</span>
+      </div>
+    </div>
+  </div>
+
+  <div id="view-transp-detalhe" class="card" style="display:none;">
+    <p style="font-size:13px;color:var(--text-muted);margin:0 0 16px;"><span style="cursor:pointer;color:var(--text-accent);" onclick="showView('home')">← Resumo</span> / <span style="cursor:pointer;color:var(--text-accent);" onclick="showView('transp-lista')">Correios e mais transportadoras</span> / J&amp;T Express</p>
+    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:16px;">
+      <div>
+        <p style="font-size:15px;font-weight:500;margin:0;">J&amp;T Express</p>
+        <p style="font-size:13px;color:var(--text-secondary);margin:2px 0 0;">Entrega rápida, rastreamento eficiente e ótimo custo-benefício</p>
+      </div>
+      <div style="display:flex;align-items:center;gap:8px;">
+        <span style="font-size:13px;color:var(--text-accent);">● Ativo</span>
+        <button>Salvar alterações</button>
+      </div>
+    </div>
+
+    <div style="border-top:0.5px solid var(--border);padding-top:16px;">
+
+      <div id="carrier-state-info">
+        <div style="display:flex;align-items:center;gap:8px;margin-bottom:10px;">
+          <i class="ti ti-truck" style="font-size:16px;color:var(--text-success);"></i>
+          <p style="font-size:14px;font-weight:500;margin:0;">Coleta no endereço da loja</p>
+        </div>
+        <p style="font-size:13px;color:var(--text-secondary);margin:0 0 14px;">Um motorista busca seus pacotes na loja. Você não precisa ir a um ponto de postagem.</p>
+        <div style="border-top:0.5px solid var(--border);margin-bottom:16px;">
+          <div style="display:flex;align-items:center;gap:12px;padding:10px 0;border-bottom:0.5px solid var(--border);">
+            <div style="width:24px;height:24px;border-radius:6px;background:var(--bg-accent);display:flex;align-items:center;justify-content:center;flex-shrink:0;"><i class="ti ti-calendar" style="font-size:13px;color:var(--text-accent);"></i></div>
+            <p style="font-size:12px;margin:0;">Coletas acontecem de segunda a sexta, janela 08h às 18h</p>
+          </div>
+          <div style="display:flex;align-items:center;gap:12px;padding:10px 0;border-bottom:0.5px solid var(--border);">
+            <div style="width:24px;height:24px;border-radius:6px;background:var(--bg-accent);display:flex;align-items:center;justify-content:center;flex-shrink:0;"><i class="ti ti-coin" style="font-size:13px;color:var(--text-accent);"></i></div>
+            <p style="font-size:12px;margin:0;">Você não paga nada, pois o consumidor já pagou o frete</p>
+          </div>
+          <div style="display:flex;align-items:center;gap:12px;padding:10px 0;">
+            <div style="width:24px;height:24px;border-radius:6px;background:var(--bg-accent);display:flex;align-items:center;justify-content:center;flex-shrink:0;"><i class="ti ti-map-pin" style="font-size:13px;color:var(--text-accent);"></i></div>
+            <p style="font-size:12px;margin:0;">O código de rastreio já vem na etiqueta</p>
+          </div>
+        </div>
+        <button onclick="setCarrierState('form')" style="border-color:var(--border-accent);color:var(--text-accent);">Preencher dados da coleta</button>
       </div>
 
-      <div class="al show" data-c="jt" style="display:flex;align-items:flex-start;gap:10px;padding:10px 0;border-top:0.5px solid var(--border);">
-        <i class="ti ti-alert-triangle" style="font-size:16px;color:var(--text-danger);margin-top:1px;"></i>
-        <div><p style="font-size:13px;margin:0;">2 pedidos ficaram fora da coleta de ontem</p><p style="font-size:11px;color:var(--text-muted);margin:2px 0 0;">J&amp;T Express</p></div>
-      </div>
-      <div class="al show" data-c="loggi" style="display:flex;align-items:flex-start;gap:10px;padding:10px 0;border-top:0.5px solid var(--border);">
-        <i class="ti ti-clock" style="font-size:16px;color:var(--text-warning);margin-top:1px;"></i>
-        <div><p style="font-size:13px;margin:0;">5 pedidos vão perder a coleta de amanhã se não emitidos até 23h59</p><p style="font-size:11px;color:var(--text-muted);margin:2px 0 0;">Loggi</p></div>
-      </div>
-      <div class="al show" data-c="jt" style="display:flex;align-items:flex-start;gap:10px;padding:10px 0;border-top:0.5px solid var(--border);">
-        <i class="ti ti-circle-check" style="font-size:16px;color:var(--text-success);margin-top:1px;"></i>
-        <div><p style="font-size:13px;margin:0;">Todos os pedidos previstos para ontem foram coletados</p><p style="font-size:11px;color:var(--text-muted);margin:2px 0 0;">J&amp;T Express · 24 pedidos</p></div>
-      </div>
-
-      <div style="border-top:0.5px solid var(--border);margin-top:12px;padding-top:14px;">
-        <p style="font-size:13px;color:var(--text-secondary);margin:0 0 8px;">Status por transportadora</p>
-        <div class="row2" style="margin-bottom:0;">
-          <div class="stat"><p class="k">J&amp;T Express</p><p class="v" style="color:var(--text-success);">Coleta ativa</p></div>
-          <div class="stat"><p class="k">Loggi</p><p class="v" style="color:var(--text-success);">Coleta ativa</p></div>
+      <div id="carrier-state-form" style="display:none;">
+        <p style="font-size:14px;font-weight:500;margin:0 0 4px;">Dados para ativação da coleta</p>
+        <p style="font-size:12px;color:var(--text-secondary);margin:0 0 14px;">Confira os dados da loja e escolha os dias desejados. Sem escolha de horário — a janela é fixa (08h às 18h).</p>
+        <div class="row">
+          <div class="field"><label>Endereço de coleta</label><input type="text" value="Rua Exemplo, 123 - Centro"></div>
+        </div>
+        <div class="row">
+          <div class="field"><label>Complemento</label><input type="text" placeholder="Sala, bloco, andar"></div>
+          <div class="field"><label>Ponto de referência</label><input type="text" placeholder="Próximo a..."></div>
+        </div>
+        <div class="row">
+          <div class="field"><label>Responsável</label><input type="text" value="Marcelo Camillo"></div>
+          <div class="field"><label>Telefone</label><input type="text" value="(11) 99999-0000"></div>
+        </div>
+        <div class="row">
+          <div class="field"><label>E-mail</label><input type="text" value="marcelo@loja.com.br"></div>
+        </div>
+        <p style="font-size:12px;color:var(--text-secondary);margin:10px 0 6px;">Dias desejados para a coleta</p>
+        <div style="display:flex;gap:6px;margin-bottom:18px;">
+          <button class="chip on" onclick="this.classList.toggle('on')">Seg</button>
+          <button class="chip" onclick="this.classList.toggle('on')">Ter</button>
+          <button class="chip on" onclick="this.classList.toggle('on')">Qua</button>
+          <button class="chip on" onclick="this.classList.toggle('on')">Qui</button>
+          <button class="chip" onclick="this.classList.toggle('on')">Sex</button>
+        </div>
+        <div style="display:flex;gap:8px;">
+          <button onclick="setCarrierState('info')">Voltar</button>
+          <button onclick="setCarrierState('confirm')" style="border-color:var(--border-accent);color:var(--text-accent);">Enviar dados</button>
         </div>
       </div>
-    </div>
-    <div class="footer-nav">
-      <button onclick="goTo(0)">Reiniciar</button>
-    </div>
-  </div>
 
-  <div class="dots">
-    <button class="dot on" data-dot="0" onclick="goTo(0)" aria-label="Tela 1"></button>
-    <button class="dot" data-dot="1" onclick="goTo(1)" aria-label="Tela 2"></button>
-    <button class="dot" data-dot="2" onclick="goTo(2)" aria-label="Tela 3"></button>
-    <button class="dot" data-dot="3" onclick="goTo(3)" aria-label="Tela 4"></button>
-    <button class="dot" data-dot="4" onclick="goTo(4)" aria-label="Tela 5"></button>
-    <button class="dot" data-dot="5" onclick="goTo(5)" aria-label="Tela 6"></button>
-    <button class="dot" data-dot="6" onclick="goTo(6)" aria-label="Tela 7"></button>
+      <div id="carrier-state-confirm" style="display:none;text-align:center;padding:10px 0;">
+        <i class="ti ti-clock-hour-4" style="font-size:26px;color:var(--text-warning);"></i>
+        <p style="font-weight:500;font-size:14px;margin:12px 0 4px;">Dados enviados para validação</p>
+        <p style="font-size:13px;color:var(--text-secondary);margin:0 auto 16px;max-width:340px;">Nossa equipe vai confirmar as informações em até 1 dia útil. Você será avisado quando a coleta estiver ativa.</p>
+        <button onclick="setCarrierState('active')">Ver como fica quando confirmado</button>
+      </div>
+
+      <div id="carrier-state-active" style="display:none;">
+        <div style="display:flex;align-items:center;gap:8px;margin-bottom:10px;">
+          <i class="ti ti-truck" style="font-size:16px;color:var(--text-success);"></i>
+          <p style="font-size:14px;font-weight:500;margin:0;">Coleta no endereço da loja</p>
+          <span style="background:var(--bg-success);color:var(--text-success);font-size:11px;padding:2px 8px;border-radius:10px;">Habilitada</span>
+        </div>
+        <div style="display:flex;flex-direction:column;gap:6px;font-size:12px;color:var(--text-secondary);margin-left:24px;">
+          <p style="margin:0;">Janela de atendimento: 08h às 18h</p>
+          <p style="margin:0;">Endereço cadastrado: Rua Exemplo, 123 - Centro</p>
+          <p style="margin:0;">O custo já está incluso no frete.</p>
+        </div>
+      </div>
+
+    </div>
   </div>
 
 </div>
 
 <script>
-function goTo(i) {
-  document.querySelectorAll('.stg').forEach(function(el) { el.classList.toggle('active', el.dataset.stg == i); });
-  document.querySelectorAll('.dot').forEach(function(el) { el.classList.toggle('on', el.dataset.dot == i); });
+var data = {
+  pendente: [
+    { id: '48601', data: '03/07/2026', nome: 'Simone Oliveira', transp: 'Loggi', coleta: true, elegivel: true },
+    { id: '48602', data: '03/07/2026', nome: 'Marcelo Camillo', transp: 'SEDEX', coleta: false, elegivel: false }
+  ],
+  aguardando: [
+    { id: '48553', data: '03/07/2026', nome: 'Anderson S de Menezes', transp: 'Loggi Coleta', coleta: true, rastreio: 'AA100987935ZZ',
+      badge: 'Coleta hoje', bg: 'var(--bg-success)', color: 'var(--text-success)', janela: '08h às 18h', status: 'Coleta hoje', doneSteps: 2, endereco: 'Rua Barão do Triunfo, 520 - São Paulo/SP' },
+    { id: '48550', data: '03/07/2026', nome: 'Nilceia Poubel', transp: 'Loggi Coleta', coleta: true, rastreio: 'AA100987652ZZ',
+      badge: 'Coleta amanhã', bg: 'var(--bg-warning)', color: 'var(--text-warning)', janela: '08h às 18h', status: 'Coleta amanhã', doneSteps: 2, endereco: 'Rua Barão do Triunfo, 520 - São Paulo/SP' },
+    { id: '48555', data: '03/07/2026', nome: 'Renata Ferreira', transp: 'Loggi Coleta', coleta: true, rastreio: 'AA100987700ZZ',
+      badge: 'Aguardando confirmação', bg: 'var(--bg-warning)', color: 'var(--text-warning)', janela: 'A confirmar', status: 'Aguardando confirmação', doneSteps: 1, endereco: 'Rua Barão do Triunfo, 520 - São Paulo/SP' },
+    { id: '48512', data: '02/07/2026', nome: 'Maria Cecilia Tezelli', transp: 'Loggi Coleta', coleta: true, rastreio: 'AA100980226ZZ',
+      badge: 'Ficou p/ próximo dia útil', bg: 'var(--bg-danger)', color: 'var(--text-danger)', janela: '08h às 18h', status: 'Fora do horário limite', doneSteps: 2,
+      endereco: 'Rua Barão do Triunfo, 520 - São Paulo/SP', motivo: 'Motivo: fora do horário limite' },
+    { id: '48524', data: '02/07/2026', nome: 'Ana Paula de Oliveira', transp: 'SEDEX', coleta: false, rastreio: 'AA100980265ZZ' }
+  ],
+  enviadas: [
+    { id: '48540', data: '01/07/2026', nome: 'Simone Oliveira', transp: 'Loggi Coleta', coleta: true, rastreio: 'ORC42166112JD',
+      status: 'Postado', coletadoEm: '01/07/2026', janela: '08h às 18h', doneSteps: 7, endereco: 'Rua Barão do Triunfo, 520 - São Paulo/SP', badge: 'Coletado', bg: 'var(--bg-success)', color: 'var(--text-success)' },
+    { id: '48501', data: '30/06/2026', nome: 'Marcelo Camillo', transp: 'SEDEX', coleta: false, rastreio: 'AZ000226429BR', status: 'Entregue' }
+  ],
+  canceladas: [
+    { id: '48490', data: '29/06/2026', nome: 'Patricia Oliveira', transp: 'Loggi Coleta', coleta: true, status: 'Cancelada', motivoCancel: 'Coleta cancelada automaticamente' },
+    { id: '48475', data: '28/06/2026', nome: 'Simone Oliveira', transp: 'SEDEX', coleta: false, status: 'Cancelada' }
+  ]
+};
+
+var steps = ['Etiqueta criada', 'Pedido incluído na coleta', 'Motorista em rota', 'Pacote coletado', 'Em transferência', 'Em trânsito', 'Entregue'];
+
+function showView(view) {
+  document.getElementById('view-home').style.display = view === 'home' ? 'block' : 'none';
+  document.getElementById('view-etiquetas').style.display = view === 'etiquetas' ? 'flex' : 'none';
+  document.getElementById('view-transp-lista').style.display = view === 'transp-lista' ? 'block' : 'none';
+  document.getElementById('view-transp-detalhe').style.display = view === 'transp-detalhe' ? 'block' : 'none';
+  if (view === 'transp-detalhe') { setCarrierState('info'); }
   window.scrollTo({ top: 0, behavior: 'smooth' });
 }
-function setOutc(v, btn) {
-  document.querySelectorAll('.pill').forEach(function(el) { el.classList.remove('sel'); });
-  btn.classList.add('sel');
-  document.getElementById('outc-ok').classList.toggle('on', v == 'ok');
-  document.getElementById('outc-no').classList.toggle('on', v == 'no');
-}
-function filt(c, btn) {
-  document.querySelectorAll('.fpill').forEach(function(el) { el.classList.remove('sel'); });
-  btn.classList.add('sel');
-  document.querySelectorAll('.al').forEach(function(el) {
-    el.classList.toggle('show', c == 'all' || el.dataset.c == c);
+
+function setCarrierState(state) {
+  ['info', 'form', 'confirm', 'active'].forEach(function(s) {
+    document.getElementById('carrier-state-' + s).style.display = (s === state) ? 'block' : 'none';
   });
 }
+
+function showTab(tab) {
+  document.querySelectorAll('.tab-btn').forEach(function(b) { b.classList.toggle('active', b.dataset.tab === tab); });
+  closePanel();
+  var html = '';
+
+  if (tab === 'pendente') {
+    html += '<table><thead><tr><th></th><th>Pedido</th><th>Destinatário e envio</th><th>Ações</th></tr></thead><tbody>';
+    data.pendente.forEach(function(r) {
+      html += '<tr><td><input type="checkbox" style="width:auto;"></td>' +
+        '<td>#' + r.id + '<br><span style="font-size:11px;color:var(--text-muted);">' + r.data + '</span></td>' +
+        '<td>' + r.nome + '<br><span style="font-size:11px;color:var(--text-muted);">' + r.transp + '</span>' +
+        (r.elegivel ? ' <span class="badge" style="background:var(--bg-success);color:var(--text-success);">Coleta disponível</span>' : '') + '</td>' +
+        '<td><i class="ti ti-eye eye" onclick="openPanel(\'pendente\',\'' + r.id + '\')"></i></td></tr>';
+    });
+    html += '</tbody></table>';
+    html += '<div style="display:flex;align-items:center;gap:8px;background:var(--bg-warning);border-radius:var(--radius);padding:10px 14px;margin-top:14px;">' +
+      '<i class="ti ti-clock" style="font-size:15px;color:var(--text-warning);"></i>' +
+      '<p style="font-size:12px;color:var(--text-warning);margin:0;">Emita a etiqueta do pedido #48601 até 23h59 para garantir a coleta de amanhã.</p></div>';
+  }
+
+  if (tab === 'aguardando') {
+    html += '<table><thead><tr><th></th><th>Pedido</th><th>Destinatário e envio</th><th>Coleta</th><th>Rastreio</th><th>Ações</th></tr></thead><tbody>';
+    data.aguardando.forEach(function(r) {
+      var coletaCell = r.coleta
+        ? '<span class="badge" style="background:' + r.bg + ';color:' + r.color + ';">' + r.badge + '</span>' +
+          (r.janela !== 'A confirmar' ? '<br><span style="font-size:10px;color:var(--text-muted);">Janela: ' + r.janela + '</span>' : '') +
+          (r.motivo ? '<br><span style="font-size:10px;color:var(--text-danger);">' + r.motivo + '</span>' : '')
+        : '<span style="color:var(--text-muted);">—</span>';
+      html += '<tr><td><input type="checkbox" style="width:auto;"></td>' +
+        '<td>#' + r.id + '<br><span style="font-size:11px;color:var(--text-muted);">' + r.data + '</span></td>' +
+        '<td>' + r.nome + '<br><span style="font-size:11px;color:var(--text-muted);">' + r.transp + '</span></td>' +
+        '<td>' + coletaCell + '</td>' +
+        '<td style="color:var(--text-accent);">' + r.rastreio + '</td>' +
+        '<td><i class="ti ti-eye eye" onclick="openPanel(\'aguardando\',\'' + r.id + '\')"></i></td></tr>';
+    });
+    html += '</tbody></table>';
+  }
+
+  if (tab === 'enviadas') {
+    html += '<table><thead><tr><th>Pedido</th><th>Destinatário e envio</th><th>Status</th><th>Rastreio</th><th>Ações</th></tr></thead><tbody>';
+    data.enviadas.forEach(function(r) {
+      var statusCell = '<span class="badge" style="background:var(--bg-success);color:var(--text-success);">' + r.status + '</span>' +
+        (r.coleta ? '<br><span style="font-size:10px;color:var(--text-muted);"><i class="ti ti-check" style="font-size:11px;"></i> Coletado em ' + r.coletadoEm + '</span>' : '');
+      html += '<tr><td>#' + r.id + '<br><span style="font-size:11px;color:var(--text-muted);">' + r.data + '</span></td>' +
+        '<td>' + r.nome + '<br><span style="font-size:11px;color:var(--text-muted);">' + r.transp + '</span></td>' +
+        '<td>' + statusCell + '</td>' +
+        '<td style="color:var(--text-accent);">' + r.rastreio + '</td>' +
+        '<td><i class="ti ti-truck-delivery" style="font-size:15px;color:var(--text-muted);margin-right:6px;"></i><i class="ti ti-eye eye" onclick="openPanel(\'enviadas\',\'' + r.id + '\')"></i></td></tr>';
+    });
+    html += '</tbody></table>';
+  }
+
+  if (tab === 'canceladas') {
+    html += '<table><thead><tr><th></th><th>Pedido</th><th>Destinatário e envio</th><th>Status</th><th>Coleta</th><th>Ações</th></tr></thead><tbody>';
+    data.canceladas.forEach(function(r) {
+      html += '<tr><td><input type="checkbox" style="width:auto;"></td>' +
+        '<td>#' + r.id + '<br><span style="font-size:11px;color:var(--text-muted);">' + r.data + '</span></td>' +
+        '<td>' + r.nome + '<br><span style="font-size:11px;color:var(--text-muted);">' + r.transp + '</span></td>' +
+        '<td><span class="badge" style="background:var(--bg-danger);color:var(--text-danger);">' + r.status + '</span></td>' +
+        '<td style="color:var(--text-muted);font-size:12px;">' + (r.motivoCancel || '—') + '</td>' +
+        '<td><i class="ti ti-eye eye" onclick="openPanel(\'canceladas\',\'' + r.id + '\')"></i></td></tr>';
+    });
+    html += '</tbody></table>';
+  }
+
+  document.getElementById('tab-content').innerHTML = html;
+}
+
+function closePanel() {
+  document.getElementById('side-panel').style.display = 'none';
+}
+
+function openPanel(tab, id) {
+  var r = data[tab].find(function(x) { return x.id === id; });
+  var panel = document.getElementById('side-panel');
+
+  if (!r.coleta) {
+    panel.innerHTML =
+      '<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:10px;">' +
+      '<p style="font-weight:500;font-size:14px;margin:0;">Pedido #' + r.id + '</p>' +
+      '<i class="ti ti-x" style="cursor:pointer;color:var(--text-muted);" onclick="closePanel()"></i></div>' +
+      '<p style="font-size:12px;color:var(--text-muted);margin:0 0 12px;">' + r.transp + '</p>' +
+      '<div style="background:var(--surface-2);border-radius:var(--radius);padding:10px 12px;">' +
+      '<p style="font-size:13px;margin:0;">Este pedido não possui coleta.</p></div>';
+    panel.style.display = 'block';
+    return;
+  }
+
+  var timelineHtml = steps.map(function(label, i) {
+    var done = i < (r.doneSteps || 0);
+    var isLast = i === steps.length - 1;
+    return '<div class="timeline-row">' +
+      '<div class="timeline-dot-line">' +
+      (done ? '<i class="ti ti-circle-check-filled" style="font-size:16px;color:var(--text-success);"></i>' : '<span style="width:12px;height:12px;border-radius:50%;border:1.5px solid var(--border-strong);display:inline-block;margin:2px;"></span>') +
+      (isLast ? '' : '<div class="timeline-line' + (done ? ' done' : '') + '"></div>') +
+      '</div><p style="font-size:12px;margin:0 0 ' + (isLast ? '0' : '12') + 'px;' + (done ? '' : 'color:var(--text-muted);') + '">' + label + '</p></div>';
+  }).join('');
+
+  panel.innerHTML =
+    '<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:2px;">' +
+    '<p style="font-weight:500;font-size:14px;margin:0;">Pedido #' + r.id + '</p>' +
+    '<i class="ti ti-x" style="cursor:pointer;color:var(--text-muted);" onclick="closePanel()"></i></div>' +
+    '<p style="font-size:12px;color:var(--text-muted);margin:0 0 12px;">' + r.nome + '</p>' +
+    (r.motivo ? '<div style="background:var(--bg-danger);border-radius:var(--radius);padding:8px 10px;margin-bottom:12px;"><p style="font-size:11px;color:var(--text-danger);margin:0;">' + r.motivo + '</p></div>' : '') +
+    '<div style="display:flex;flex-direction:column;gap:6px;margin-bottom:14px;font-size:11px;">' +
+    '<div style="display:flex;justify-content:space-between;"><span style="color:var(--text-muted);">Método de envio</span><span>' + r.transp + '</span></div>' +
+    '<div style="display:flex;justify-content:space-between;"><span style="color:var(--text-muted);">Status</span><span>' + r.status + '</span></div>' +
+    '<div style="display:flex;justify-content:space-between;"><span style="color:var(--text-muted);">Janela de atendimento</span><span>' + r.janela + '</span></div>' +
+    '<div style="display:flex;justify-content:space-between;"><span style="color:var(--text-muted);">Endereço da coleta</span><span style="text-align:right;max-width:160px;">' + r.endereco + '</span></div>' +
+    '</div>' +
+    '<div style="border-top:0.5px solid var(--border);padding-top:12px;">' + timelineHtml + '</div>';
+  panel.style.display = 'block';
+}
+
+showTab('aguardando');
+showView('home');
 </script>
 
 </body>
