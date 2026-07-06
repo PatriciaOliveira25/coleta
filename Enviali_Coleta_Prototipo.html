@@ -75,11 +75,18 @@
   .nav-btn { font-size: 13px; }
   .nav-btn.active { border-color: var(--border-accent); color: var(--text-accent); }
   .nav-card:hover { background: var(--surface-1); }
-  .row { display: flex; gap: 8px; margin-bottom: 10px; }
+  .row { display: flex; gap: 10px; margin-bottom: 12px; }
   .field { flex: 1; }
   .field label { font-size: 12px; color: var(--text-secondary); display: block; margin-bottom: 4px; }
-  .chip { display: inline-flex; align-items: center; justify-content: center; padding: 6px 10px; border-radius: 6px; border: 0.5px solid var(--border); font-size: 13px; cursor: pointer; background: var(--surface-2); }
+  .chip { padding: 6px 12px; border-radius: 8px; border: 1.5px solid var(--border); font-size: 13px; cursor: pointer; background: var(--surface-2); color: var(--text-primary); }
   .chip.on { background: var(--bg-accent); color: var(--text-accent); border-color: var(--border-accent); }
+  .pref-row { display: flex; align-items: center; gap: 8px; margin-bottom: 10px; }
+  .pref-row select { flex: 1; }
+  .seg { display: inline-flex; border: 1px solid var(--border); border-radius: 8px; overflow: hidden; flex-shrink: 0; }
+  .seg button { border: none; background: var(--surface-2); font-size: 12.5px; padding: 7px 12px; cursor: pointer; color: var(--text-secondary); }
+  .seg button.on { background: var(--bg-accent); color: var(--text-accent); }
+  .trash-btn { background: none; border: none; cursor: pointer; padding: 4px; flex-shrink: 0; }
+  select { font-family: inherit; font-size: 13px; width: 100%; padding: 8px 10px; border: 1px solid var(--border); border-radius: var(--radius); background: var(--surface-2); color: var(--text-primary); }
 </style>
 </head>
 <body>
@@ -223,14 +230,16 @@
         <div class="row">
           <div class="field"><label>E-mail</label><input type="text" value="marcelo@loja.com.br"></div>
         </div>
-        <p style="font-size:12px;color:var(--text-secondary);margin:10px 0 6px;">Dias desejados para a coleta</p>
-        <div style="display:flex;gap:6px;margin-bottom:18px;">
-          <button class="chip on" onclick="this.classList.toggle('on')">Seg</button>
-          <button class="chip" onclick="this.classList.toggle('on')">Ter</button>
-          <button class="chip on" onclick="this.classList.toggle('on')">Qua</button>
-          <button class="chip on" onclick="this.classList.toggle('on')">Qui</button>
-          <button class="chip" onclick="this.classList.toggle('on')">Sex</button>
+
+        <p style="font-size:12px;color:var(--text-secondary);margin:10px 0 10px;">Preferências de dia e período para coleta (até 3)</p>
+        <div id="pref-rows"></div>
+        <button type="button" id="add-pref-btn" onclick="addPrefRow()" style="border-color:var(--border-accent);color:var(--text-accent);font-size:13px;margin-bottom:16px;">+ Adicionar preferência</button>
+
+        <div style="display:flex;align-items:flex-start;gap:8px;background:var(--bg-warning);border-radius:var(--radius);padding:10px 14px;margin-bottom:18px;">
+          <i class="ti ti-alert-circle" style="font-size:15px;color:var(--text-warning);margin-top:1px;"></i>
+          <p style="font-size:12px;color:var(--text-warning);margin:0;">A solicitação será analisada e a transportadora retornará em breve informando se é possível realizar a coleta nos dias e períodos escolhidos.</p>
         </div>
+
         <div style="display:flex;gap:8px;">
           <button onclick="setCarrierState('info')">Voltar</button>
           <button onclick="setCarrierState('confirm')" style="border-color:var(--border-accent);color:var(--text-accent);">Enviar dados</button>
@@ -271,160 +280,4 @@ var data = {
   aguardando: [
     { id: '48553', data: '03/07/2026', nome: 'Anderson S de Menezes', transp: 'Loggi Coleta', coleta: true, rastreio: 'AA100987935ZZ',
       badge: 'Coleta hoje', bg: 'var(--bg-success)', color: 'var(--text-success)', janela: '08h às 18h', status: 'Coleta hoje', doneSteps: 2, endereco: 'Rua Barão do Triunfo, 520 - São Paulo/SP' },
-    { id: '48550', data: '03/07/2026', nome: 'Nilceia Poubel', transp: 'Loggi Coleta', coleta: true, rastreio: 'AA100987652ZZ',
-      badge: 'Coleta amanhã', bg: 'var(--bg-warning)', color: 'var(--text-warning)', janela: '08h às 18h', status: 'Coleta amanhã', doneSteps: 2, endereco: 'Rua Barão do Triunfo, 520 - São Paulo/SP' },
-    { id: '48555', data: '03/07/2026', nome: 'Renata Ferreira', transp: 'Loggi Coleta', coleta: true, rastreio: 'AA100987700ZZ',
-      badge: 'Aguardando confirmação', bg: 'var(--bg-warning)', color: 'var(--text-warning)', janela: 'A confirmar', status: 'Aguardando confirmação', doneSteps: 1, endereco: 'Rua Barão do Triunfo, 520 - São Paulo/SP' },
-    { id: '48512', data: '02/07/2026', nome: 'Maria Cecilia Tezelli', transp: 'Loggi Coleta', coleta: true, rastreio: 'AA100980226ZZ',
-      badge: 'Ficou p/ próximo dia útil', bg: 'var(--bg-danger)', color: 'var(--text-danger)', janela: '08h às 18h', status: 'Fora do horário limite', doneSteps: 2,
-      endereco: 'Rua Barão do Triunfo, 520 - São Paulo/SP', motivo: 'Motivo: fora do horário limite' },
-    { id: '48524', data: '02/07/2026', nome: 'Ana Paula de Oliveira', transp: 'SEDEX', coleta: false, rastreio: 'AA100980265ZZ' }
-  ],
-  enviadas: [
-    { id: '48540', data: '01/07/2026', nome: 'Simone Oliveira', transp: 'Loggi Coleta', coleta: true, rastreio: 'ORC42166112JD',
-      status: 'Postado', coletadoEm: '01/07/2026', janela: '08h às 18h', doneSteps: 7, endereco: 'Rua Barão do Triunfo, 520 - São Paulo/SP', badge: 'Coletado', bg: 'var(--bg-success)', color: 'var(--text-success)' },
-    { id: '48501', data: '30/06/2026', nome: 'Marcelo Camillo', transp: 'SEDEX', coleta: false, rastreio: 'AZ000226429BR', status: 'Entregue' }
-  ],
-  canceladas: [
-    { id: '48490', data: '29/06/2026', nome: 'Patricia Oliveira', transp: 'Loggi Coleta', coleta: true, status: 'Cancelada', motivoCancel: 'Coleta cancelada automaticamente' },
-    { id: '48475', data: '28/06/2026', nome: 'Simone Oliveira', transp: 'SEDEX', coleta: false, status: 'Cancelada' }
-  ]
-};
-
-var steps = ['Etiqueta criada', 'Pedido incluído na coleta', 'Motorista em rota', 'Pacote coletado', 'Em transferência', 'Em trânsito', 'Entregue'];
-
-function showView(view) {
-  document.getElementById('view-home').style.display = view === 'home' ? 'block' : 'none';
-  document.getElementById('view-etiquetas').style.display = view === 'etiquetas' ? 'flex' : 'none';
-  document.getElementById('view-transp-lista').style.display = view === 'transp-lista' ? 'block' : 'none';
-  document.getElementById('view-transp-detalhe').style.display = view === 'transp-detalhe' ? 'block' : 'none';
-  if (view === 'transp-detalhe') { setCarrierState('info'); }
-  window.scrollTo({ top: 0, behavior: 'smooth' });
-}
-
-function setCarrierState(state) {
-  ['info', 'form', 'confirm', 'active'].forEach(function(s) {
-    document.getElementById('carrier-state-' + s).style.display = (s === state) ? 'block' : 'none';
-  });
-}
-
-function showTab(tab) {
-  document.querySelectorAll('.tab-btn').forEach(function(b) { b.classList.toggle('active', b.dataset.tab === tab); });
-  closePanel();
-  var html = '';
-
-  if (tab === 'pendente') {
-    html += '<table><thead><tr><th></th><th>Pedido</th><th>Destinatário e envio</th><th>Ações</th></tr></thead><tbody>';
-    data.pendente.forEach(function(r) {
-      html += '<tr><td><input type="checkbox" style="width:auto;"></td>' +
-        '<td>#' + r.id + '<br><span style="font-size:11px;color:var(--text-muted);">' + r.data + '</span></td>' +
-        '<td>' + r.nome + '<br><span style="font-size:11px;color:var(--text-muted);">' + r.transp + '</span>' +
-        (r.elegivel ? ' <span class="badge" style="background:var(--bg-success);color:var(--text-success);">Coleta disponível</span>' : '') + '</td>' +
-        '<td><i class="ti ti-eye eye" onclick="openPanel(\'pendente\',\'' + r.id + '\')"></i></td></tr>';
-    });
-    html += '</tbody></table>';
-    html += '<div style="display:flex;align-items:center;gap:8px;background:var(--bg-warning);border-radius:var(--radius);padding:10px 14px;margin-top:14px;">' +
-      '<i class="ti ti-clock" style="font-size:15px;color:var(--text-warning);"></i>' +
-      '<p style="font-size:12px;color:var(--text-warning);margin:0;">Emita a etiqueta do pedido #48601 até 23h59 para garantir a coleta de amanhã.</p></div>';
-  }
-
-  if (tab === 'aguardando') {
-    html += '<table><thead><tr><th></th><th>Pedido</th><th>Destinatário e envio</th><th>Coleta</th><th>Rastreio</th><th>Ações</th></tr></thead><tbody>';
-    data.aguardando.forEach(function(r) {
-      var coletaCell = r.coleta
-        ? '<span class="badge" style="background:' + r.bg + ';color:' + r.color + ';">' + r.badge + '</span>' +
-          (r.janela !== 'A confirmar' ? '<br><span style="font-size:10px;color:var(--text-muted);">Janela: ' + r.janela + '</span>' : '') +
-          (r.motivo ? '<br><span style="font-size:10px;color:var(--text-danger);">' + r.motivo + '</span>' : '')
-        : '<span style="color:var(--text-muted);">—</span>';
-      html += '<tr><td><input type="checkbox" style="width:auto;"></td>' +
-        '<td>#' + r.id + '<br><span style="font-size:11px;color:var(--text-muted);">' + r.data + '</span></td>' +
-        '<td>' + r.nome + '<br><span style="font-size:11px;color:var(--text-muted);">' + r.transp + '</span></td>' +
-        '<td>' + coletaCell + '</td>' +
-        '<td style="color:var(--text-accent);">' + r.rastreio + '</td>' +
-        '<td><i class="ti ti-eye eye" onclick="openPanel(\'aguardando\',\'' + r.id + '\')"></i></td></tr>';
-    });
-    html += '</tbody></table>';
-  }
-
-  if (tab === 'enviadas') {
-    html += '<table><thead><tr><th>Pedido</th><th>Destinatário e envio</th><th>Status</th><th>Rastreio</th><th>Ações</th></tr></thead><tbody>';
-    data.enviadas.forEach(function(r) {
-      var statusCell = '<span class="badge" style="background:var(--bg-success);color:var(--text-success);">' + r.status + '</span>' +
-        (r.coleta ? '<br><span style="font-size:10px;color:var(--text-muted);"><i class="ti ti-check" style="font-size:11px;"></i> Coletado em ' + r.coletadoEm + '</span>' : '');
-      html += '<tr><td>#' + r.id + '<br><span style="font-size:11px;color:var(--text-muted);">' + r.data + '</span></td>' +
-        '<td>' + r.nome + '<br><span style="font-size:11px;color:var(--text-muted);">' + r.transp + '</span></td>' +
-        '<td>' + statusCell + '</td>' +
-        '<td style="color:var(--text-accent);">' + r.rastreio + '</td>' +
-        '<td><i class="ti ti-truck-delivery" style="font-size:15px;color:var(--text-muted);margin-right:6px;"></i><i class="ti ti-eye eye" onclick="openPanel(\'enviadas\',\'' + r.id + '\')"></i></td></tr>';
-    });
-    html += '</tbody></table>';
-  }
-
-  if (tab === 'canceladas') {
-    html += '<table><thead><tr><th></th><th>Pedido</th><th>Destinatário e envio</th><th>Status</th><th>Coleta</th><th>Ações</th></tr></thead><tbody>';
-    data.canceladas.forEach(function(r) {
-      html += '<tr><td><input type="checkbox" style="width:auto;"></td>' +
-        '<td>#' + r.id + '<br><span style="font-size:11px;color:var(--text-muted);">' + r.data + '</span></td>' +
-        '<td>' + r.nome + '<br><span style="font-size:11px;color:var(--text-muted);">' + r.transp + '</span></td>' +
-        '<td><span class="badge" style="background:var(--bg-danger);color:var(--text-danger);">' + r.status + '</span></td>' +
-        '<td style="color:var(--text-muted);font-size:12px;">' + (r.motivoCancel || '—') + '</td>' +
-        '<td><i class="ti ti-eye eye" onclick="openPanel(\'canceladas\',\'' + r.id + '\')"></i></td></tr>';
-    });
-    html += '</tbody></table>';
-  }
-
-  document.getElementById('tab-content').innerHTML = html;
-}
-
-function closePanel() {
-  document.getElementById('side-panel').style.display = 'none';
-}
-
-function openPanel(tab, id) {
-  var r = data[tab].find(function(x) { return x.id === id; });
-  var panel = document.getElementById('side-panel');
-
-  if (!r.coleta) {
-    panel.innerHTML =
-      '<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:10px;">' +
-      '<p style="font-weight:500;font-size:14px;margin:0;">Pedido #' + r.id + '</p>' +
-      '<i class="ti ti-x" style="cursor:pointer;color:var(--text-muted);" onclick="closePanel()"></i></div>' +
-      '<p style="font-size:12px;color:var(--text-muted);margin:0 0 12px;">' + r.transp + '</p>' +
-      '<div style="background:var(--surface-2);border-radius:var(--radius);padding:10px 12px;">' +
-      '<p style="font-size:13px;margin:0;">Este pedido não possui coleta.</p></div>';
-    panel.style.display = 'block';
-    return;
-  }
-
-  var timelineHtml = steps.map(function(label, i) {
-    var done = i < (r.doneSteps || 0);
-    var isLast = i === steps.length - 1;
-    return '<div class="timeline-row">' +
-      '<div class="timeline-dot-line">' +
-      (done ? '<i class="ti ti-circle-check-filled" style="font-size:16px;color:var(--text-success);"></i>' : '<span style="width:12px;height:12px;border-radius:50%;border:1.5px solid var(--border-strong);display:inline-block;margin:2px;"></span>') +
-      (isLast ? '' : '<div class="timeline-line' + (done ? ' done' : '') + '"></div>') +
-      '</div><p style="font-size:12px;margin:0 0 ' + (isLast ? '0' : '12') + 'px;' + (done ? '' : 'color:var(--text-muted);') + '">' + label + '</p></div>';
-  }).join('');
-
-  panel.innerHTML =
-    '<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:2px;">' +
-    '<p style="font-weight:500;font-size:14px;margin:0;">Pedido #' + r.id + '</p>' +
-    '<i class="ti ti-x" style="cursor:pointer;color:var(--text-muted);" onclick="closePanel()"></i></div>' +
-    '<p style="font-size:12px;color:var(--text-muted);margin:0 0 12px;">' + r.nome + '</p>' +
-    (r.motivo ? '<div style="background:var(--bg-danger);border-radius:var(--radius);padding:8px 10px;margin-bottom:12px;"><p style="font-size:11px;color:var(--text-danger);margin:0;">' + r.motivo + '</p></div>' : '') +
-    '<div style="display:flex;flex-direction:column;gap:6px;margin-bottom:14px;font-size:11px;">' +
-    '<div style="display:flex;justify-content:space-between;"><span style="color:var(--text-muted);">Método de envio</span><span>' + r.transp + '</span></div>' +
-    '<div style="display:flex;justify-content:space-between;"><span style="color:var(--text-muted);">Status</span><span>' + r.status + '</span></div>' +
-    '<div style="display:flex;justify-content:space-between;"><span style="color:var(--text-muted);">Janela de atendimento</span><span>' + r.janela + '</span></div>' +
-    '<div style="display:flex;justify-content:space-between;"><span style="color:var(--text-muted);">Endereço da coleta</span><span style="text-align:right;max-width:160px;">' + r.endereco + '</span></div>' +
-    '</div>' +
-    '<div style="border-top:0.5px solid var(--border);padding-top:12px;">' + timelineHtml + '</div>';
-  panel.style.display = 'block';
-}
-
-showTab('aguardando');
-showView('home');
-</script>
-
-</body>
-</html>
+    { id: '48550', data: '03/07/2026', nome: 'Nilceia Poubel', transp: 'Loggi Coleta', coleta: true, rastreio:
