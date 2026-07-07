@@ -87,9 +87,37 @@
   .seg button.on { background: var(--bg-accent); color: var(--text-accent); }
   .trash-btn { background: none; border: none; cursor: pointer; padding: 4px; flex-shrink: 0; }
   select { font-family: inherit; font-size: 13px; width: 100%; padding: 8px 10px; border: 1px solid var(--border); border-radius: var(--radius); background: var(--surface-2); color: var(--text-primary); }
+  .qt { width: 100%; border-collapse: collapse; font-size: 13px; }
+  .qt th { text-align: left; font-size: 11.5px; color: var(--text-secondary); font-weight: 600; text-transform: uppercase; letter-spacing: 0.02em; padding: 10px 6px; border-bottom: 1px solid var(--border); }
+  .qt td { padding: 12px 6px; border-bottom: 1px solid var(--border); vertical-align: middle; }
+  .qt tr.sel { background: var(--bg-accent); }
+  .pill { font-size: 11.5px; font-weight: 500; padding: 3px 10px; border-radius: 20px; display: inline-flex; align-items: center; gap: 5px; }
+  .pill .dot { width: 6px; height: 6px; border-radius: 50%; }
+  .kebab-wrap { position: relative; display: inline-block; }
+  .kebab-btn { background: none; border: none; cursor: pointer; padding: 6px; border-radius: 6px; color: var(--text-muted); }
+  .kebab-btn:hover { background: var(--surface-1); }
+  .kebab-menu { display: none; position: absolute; right: 0; top: 32px; background: var(--surface-2); border: 1px solid var(--border); border-radius: 8px; box-shadow: 0 8px 24px -8px rgba(0,0,0,0.25); min-width: 180px; z-index: 20; overflow: hidden; }
+  .kebab-menu.open { display: block; }
+  .kebab-item { display: flex; align-items: center; gap: 8px; padding: 9px 12px; font-size: 12.5px; cursor: pointer; color: var(--text-primary); }
+  .kebab-item:hover { background: var(--surface-1); }
+  .kebab-item.danger { color: var(--text-danger); }
+  .actionbar { display: none; align-items: center; justify-content: space-between; background: var(--surface-1); border: 1px solid var(--border-accent); border-radius: 10px; padding: 10px 14px; margin-bottom: 12px; }
+  .actionbar.show { display: flex; }
+  .actionbar-btn { font-size: 12.5px; padding: 7px 14px; border-radius: 7px; border: 1px solid var(--border-strong); background: var(--surface-2); cursor: pointer; color: var(--text-primary); }
+  .actionbar-btn.primary { background: var(--text-accent); border-color: var(--text-accent); color: #fff; }
+  .actionbar-btn.danger { color: var(--text-danger); border-color: var(--text-danger); background: var(--surface-2); }
+  .janela-pill { font-size: 12px; padding: 6px 14px; border-radius: 20px; border: 1.5px solid var(--border); background: var(--surface-2); cursor: pointer; }
+  .janela-pill.on { border-color: var(--text-accent); background: var(--bg-accent); color: var(--text-accent); }
+  .toast { position: fixed; bottom: 20px; left: 50%; transform: translateX(-50%) translateY(20px); background: #1a1a1a; color: #fff; padding: 12px 20px; border-radius: 10px; font-size: 13px; opacity: 0; transition: all .25s; z-index: 50; box-shadow: 0 12px 32px -8px rgba(0,0,0,0.4); }
+  .toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
+  .day-chip { font-size: 12px; padding: 7px 12px; border-radius: 8px; border: 1.5px solid var(--border); background: var(--surface-2); cursor: pointer; color: var(--text-secondary); }
+  .day-chip.on { border-color: var(--text-accent); background: var(--bg-accent); color: var(--text-accent); font-weight: 500; }
+  .toggle-sw { width: 34px; height: 19px; border-radius: 10px; display: inline-block; position: relative; cursor: pointer; }
+  .toggle-sw .knob { width: 15px; height: 15px; background: #fff; border-radius: 50%; position: absolute; top: 2px; transition: left .15s; }
 </style>
 </head>
 <body>
+<div class="toast" id="toast"></div>
 <div class="wrap">
 
   <div class="top">
@@ -259,10 +287,42 @@
           <p style="font-size:14px;font-weight:500;margin:0;">Coleta no endereço da loja</p>
           <span style="background:var(--bg-success);color:var(--text-success);font-size:11px;padding:2px 8px;border-radius:10px;">Habilitada</span>
         </div>
-        <div style="display:flex;flex-direction:column;gap:6px;font-size:12px;color:var(--text-secondary);margin-left:24px;">
+        <div style="display:flex;flex-direction:column;gap:6px;font-size:12px;color:var(--text-secondary);margin-left:24px;margin-bottom:18px;">
           <p style="margin:0;">Janela de atendimento: 08h às 18h</p>
           <p style="margin:0;">Endereço cadastrado: Rua Exemplo, 123 - Centro</p>
           <p style="margin:0;">O custo já está incluso no frete.</p>
+        </div>
+
+        <div style="border-top:0.5px solid var(--border);padding-top:16px;">
+          <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:4px;">
+            <p style="font-size:13px;font-weight:500;margin:0;">Automatizar a fila de coleta</p>
+            <span class="toggle-sw" id="auto-sw" style="background:var(--fill-success);" onclick="flipAuto()"><span class="knob" style="left:17px;"></span></span>
+          </div>
+          <p style="font-size:11px;color:var(--text-secondary);margin:0 0 14px;">No horário e dias configurados, todos os pedidos em "Aguardando coleta" são movidos automaticamente para "Pronto para coleta" — como o fechamento de uma PLP.</p>
+
+          <div id="auto-body-carrier">
+            <p style="font-size:11px;color:var(--text-secondary);margin:0 0 6px;font-weight:500;">Frequência</p>
+            <div style="display:flex;gap:6px;margin-bottom:12px;">
+              <button type="button" class="day-chip" onclick="setFreqCarrier('diaria', this)">Diariamente</button>
+              <button type="button" class="day-chip on" onclick="setFreqCarrier('dias', this)">Dias específicos</button>
+            </div>
+            <div id="dias-picker-carrier">
+              <p style="font-size:11px;color:var(--text-secondary);margin:0 0 6px;font-weight:500;">Dias da semana</p>
+              <div style="display:flex;gap:6px;margin-bottom:12px;">
+                <button type="button" class="day-chip on" onclick="this.classList.toggle('on');previewCarrier()">Seg</button>
+                <button type="button" class="day-chip" onclick="this.classList.toggle('on');previewCarrier()">Ter</button>
+                <button type="button" class="day-chip on" onclick="this.classList.toggle('on');previewCarrier()">Qua</button>
+                <button type="button" class="day-chip" onclick="this.classList.toggle('on');previewCarrier()">Qui</button>
+                <button type="button" class="day-chip on" onclick="this.classList.toggle('on');previewCarrier()">Sex</button>
+              </div>
+            </div>
+            <p style="font-size:11px;color:var(--text-secondary);margin:0 0 6px;font-weight:500;">Horário de execução</p>
+            <input id="auto-time-carrier" type="text" value="18:00" onchange="previewCarrier()" style="width:80px;padding:6px 8px;font-size:12px;margin-bottom:12px;">
+            <div style="display:flex;align-items:center;gap:8px;background:var(--bg-accent);border-radius:8px;padding:8px 10px;">
+              <i class="ti ti-calendar-time" style="font-size:14px;color:var(--text-accent);"></i>
+              <p id="preview-text-carrier" style="font-size:11px;color:var(--text-accent);margin:0;">Próxima execução: Seg, Qua, Sex às 18:00</p>
+            </div>
+          </div>
         </div>
       </div>
 
@@ -278,6 +338,430 @@ var data = {
     { id: '48602', data: '03/07/2026', nome: 'Marcelo Camillo', transp: 'SEDEX', coleta: false, elegivel: false }
   ],
   aguardando: [
+    { id: '48601', data: '03/07/2026', nome: 'Simone Oliveira', transp: 'Loggi Coleta', coleta: true, rastreio: 'AA100988100ZZ',
+      queueStatus: 'aguardando_coleta', janela: '08h às 18h', status: 'Aguardando coleta', doneSteps: 1, endereco: 'Rua Barão do Triunfo, 520 - São Paulo/SP' },
+    { id: '48603', data: '03/07/2026', nome: 'João Pedro Alves', transp: 'Loggi Coleta', coleta: true, rastreio: 'AA100988200ZZ',
+      queueStatus: 'aguardando_coleta', janela: '08h às 18h', status: 'Aguardando coleta', doneSteps: 1, endereco: 'Rua Barão do Triunfo, 520 - São Paulo/SP' },
     { id: '48553', data: '03/07/2026', nome: 'Anderson S de Menezes', transp: 'Loggi Coleta', coleta: true, rastreio: 'AA100987935ZZ',
-      badge: 'Coleta hoje', bg: 'var(--bg-success)', color: 'var(--text-success)', janela: '08h às 18h', status: 'Coleta hoje', doneSteps: 2, endereco: 'Rua Barão do Triunfo, 520 - São Paulo/SP' },
-    { id: '48550', data: '03/07/2026', nome: 'Nilceia Poubel', transp: 'Loggi Coleta', coleta: true, rastreio:
+      queueStatus: 'pronto_para_coleta', dataPrevista: 'Hoje', janelaEscolhida: 'Manhã', notificadoZumEm: '03/07/2026 às 08:02', janela: '08h às 18h', status: 'Pronto para coleta', doneSteps: 2, endereco: 'Rua Barão do Triunfo, 520 - São Paulo/SP' },
+    { id: '48550', data: '03/07/2026', nome: 'Nilceia Poubel', transp: 'Loggi Coleta', coleta: true, rastreio: 'AA100987652ZZ',
+      queueStatus: 'pronto_para_coleta', dataPrevista: 'Amanhã', janelaEscolhida: 'Tarde', notificadoZumEm: '03/07/2026 às 18:00', janela: '08h às 18h', status: 'Pronto para coleta', doneSteps: 2, endereco: 'Rua Barão do Triunfo, 520 - São Paulo/SP' },
+    { id: '48555', data: '03/07/2026', nome: 'Renata Ferreira', transp: 'Loggi Coleta', coleta: true, rastreio: 'AA100987700ZZ',
+      queueStatus: 'aguardando_confirmacao', janela: 'A confirmar', status: 'Aguardando confirmação da transportadora', doneSteps: 1, endereco: 'Rua Barão do Triunfo, 520 - São Paulo/SP' },
+    { id: '48512', data: '02/07/2026', nome: 'Maria Cecilia Tezelli', transp: 'Loggi Coleta', coleta: true, rastreio: 'AA100980226ZZ',
+      queueStatus: 'ficou_para_tras', janela: '08h às 18h', status: 'Fora do horário limite', doneSteps: 2,
+      endereco: 'Rua Barão do Triunfo, 520 - São Paulo/SP', motivo: 'Motivo: fora do horário limite' },
+    { id: '48524', data: '02/07/2026', nome: 'Ana Paula de Oliveira', transp: 'SEDEX', coleta: false, rastreio: 'AA100980265ZZ' }
+  ],
+  enviadas: [
+    { id: '48540', data: '01/07/2026', nome: 'Simone Oliveira', transp: 'Loggi Coleta', coleta: true, rastreio: 'ORC42166112JD',
+      status: 'Postado', coletadoEm: '01/07/2026', janela: '08h às 18h', doneSteps: 7, endereco: 'Rua Barão do Triunfo, 520 - São Paulo/SP', badge: 'Coletado', bg: 'var(--bg-success)', color: 'var(--text-success)' },
+    { id: '48501', data: '30/06/2026', nome: 'Marcelo Camillo', transp: 'SEDEX', coleta: false, rastreio: 'AZ000226429BR', status: 'Entregue' }
+  ],
+  canceladas: [
+    { id: '48490', data: '29/06/2026', nome: 'Patricia Oliveira', transp: 'Loggi Coleta', coleta: true, status: 'Cancelada', motivoCancel: 'Coleta cancelada automaticamente' },
+    { id: '48475', data: '28/06/2026', nome: 'Simone Oliveira', transp: 'SEDEX', coleta: false, status: 'Cancelada' }
+  ]
+};
+
+var steps = ['Etiqueta criada', 'Pedido incluído na coleta', 'Motorista em rota', 'Pacote coletado', 'Em transferência', 'Em trânsito', 'Entregue'];
+
+function showView(view) {
+  document.getElementById('view-home').style.display = view === 'home' ? 'block' : 'none';
+  document.getElementById('view-etiquetas').style.display = view === 'etiquetas' ? 'flex' : 'none';
+  document.getElementById('view-transp-lista').style.display = view === 'transp-lista' ? 'block' : 'none';
+  document.getElementById('view-transp-detalhe').style.display = view === 'transp-detalhe' ? 'block' : 'none';
+  if (view === 'transp-detalhe') { setCarrierState('info'); }
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+
+function setCarrierState(state) {
+  ['info', 'form', 'confirm', 'active'].forEach(function(s) {
+    document.getElementById('carrier-state-' + s).style.display = (s === state) ? (s === 'confirm' ? 'block' : 'block') : 'none';
+  });
+}
+
+var autoOnCarrier = true;
+function flipAuto() {
+  autoOnCarrier = !autoOnCarrier;
+  var sw = document.getElementById('auto-sw');
+  var knob = sw.querySelector('.knob');
+  sw.style.background = autoOnCarrier ? 'var(--fill-success)' : 'var(--border-strong)';
+  knob.style.left = autoOnCarrier ? '17px' : '2px';
+  document.getElementById('auto-body-carrier').style.opacity = autoOnCarrier ? '1' : '0.4';
+  document.getElementById('auto-body-carrier').style.pointerEvents = autoOnCarrier ? 'auto' : 'none';
+}
+function setFreqCarrier(mode, el) {
+  el.parentElement.querySelectorAll('.day-chip').forEach(function(c) { c.classList.remove('on'); });
+  el.classList.add('on');
+  document.getElementById('dias-picker-carrier').style.display = mode === 'dias' ? 'block' : 'none';
+  previewCarrier();
+}
+function previewCarrier() {
+  var days = Array.from(document.querySelectorAll('#dias-picker-carrier .day-chip.on')).map(function(d) { return d.textContent; }).join(', ');
+  var time = document.getElementById('auto-time-carrier').value;
+  var diasVisiveis = document.getElementById('dias-picker-carrier').style.display !== 'none';
+  var txt = diasVisiveis ? 'Próxima execução: ' + (days || '—') + ' às ' + time : 'Próxima execução: hoje às ' + time;
+  document.getElementById('preview-text-carrier').textContent = txt;
+}
+
+var prefRows = [];
+var prefIdCounter = 0;
+var days = ['Segunda-feira', 'Terça-feira', 'Quarta-feira', 'Quinta-feira', 'Sexta-feira'];
+
+function renderPrefRows() {
+  var container = document.getElementById('pref-rows');
+  container.innerHTML = prefRows.map(function(row) {
+    var options = days.map(function(d) {
+      return '<option' + (d === row.day ? ' selected' : '') + '>' + d + '</option>';
+    }).join('');
+    return '<div class="pref-row">' +
+      '<select onchange="updatePrefDay(' + row.id + ', this.value)">' + options + '</select>' +
+      '<div class="seg">' +
+      '<button type="button" class="' + (row.periodo === 'Manhã' ? 'on' : '') + '" onclick="updatePrefPeriodo(' + row.id + ', \'Manhã\')">Manhã</button>' +
+      '<button type="button" class="' + (row.periodo === 'Tarde' ? 'on' : '') + '" onclick="updatePrefPeriodo(' + row.id + ', \'Tarde\')">Tarde</button>' +
+      '</div>' +
+      '<button type="button" class="trash-btn" onclick="removePrefRow(' + row.id + ')"><i class="ti ti-trash" style="font-size:16px;color:var(--text-muted);"></i></button>' +
+      '</div>';
+  }).join('');
+
+  var addBtn = document.getElementById('add-pref-btn');
+  addBtn.textContent = '+ Adicionar preferência (' + prefRows.length + ' de 3)';
+  addBtn.style.display = prefRows.length >= 3 ? 'none' : 'inline-block';
+}
+
+function addPrefRow() {
+  if (prefRows.length >= 3) return;
+  prefIdCounter++;
+  prefRows.push({ id: prefIdCounter, day: days[prefRows.length % days.length], periodo: 'Manhã' });
+  renderPrefRows();
+}
+
+function removePrefRow(id) {
+  prefRows = prefRows.filter(function(r) { return r.id !== id; });
+  renderPrefRows();
+}
+
+function updatePrefDay(id, value) {
+  var row = prefRows.find(function(r) { return r.id === id; });
+  if (row) row.day = value;
+}
+
+function updatePrefPeriodo(id, value) {
+  var row = prefRows.find(function(r) { return r.id === id; });
+  if (row) { row.periodo = value; renderPrefRows(); }
+}
+
+addPrefRow();
+
+function showTab(tab) {
+  document.querySelectorAll('.tab-btn').forEach(function(b) { b.classList.toggle('active', b.dataset.tab === tab); });
+  if (tab !== 'aguardando') { checkedIds = []; }
+  closePanel();
+  var html = '';
+
+  if (tab === 'pendente') {
+    html += '<table><thead><tr><th></th><th>Pedido</th><th>Destinatário e envio</th><th>Ações</th></tr></thead><tbody>';
+    data.pendente.forEach(function(r) {
+      html += '<tr><td><input type="checkbox" style="width:auto;"></td>' +
+        '<td>#' + r.id + '<br><span style="font-size:11px;color:var(--text-muted);">' + r.data + '</span></td>' +
+        '<td>' + r.nome + '<br><span style="font-size:11px;color:var(--text-muted);">' + r.transp + '</span>' +
+        (r.elegivel ? ' <span class="badge" style="background:var(--bg-success);color:var(--text-success);">Coleta disponível</span>' : '') + '</td>' +
+        '<td><i class="ti ti-eye eye" onclick="openPanel(\'pendente\',\'' + r.id + '\')"></i></td></tr>';
+    });
+    html += '</tbody></table>';
+    html += '<div style="display:flex;align-items:center;gap:8px;background:var(--bg-warning);border-radius:var(--radius);padding:10px 14px;margin-top:14px;">' +
+      '<i class="ti ti-clock" style="font-size:15px;color:var(--text-warning);"></i>' +
+      '<p style="font-size:12px;color:var(--text-warning);margin:0;">Emita a etiqueta do pedido #48601 até 23h59 para garantir a coleta de amanhã.</p></div>';
+  }
+
+  if (tab === 'aguardando') {
+    html += '<div class="actionbar" id="bar-aguardando">' +
+      '<span id="count-aguardando" style="font-size:12.5px;color:var(--text-secondary);font-weight:500;"></span>' +
+      '<div id="bar-aguardando-step1" style="display:flex;gap:8px;">' +
+      '<button class="actionbar-btn primary" onclick="showJanelaStep()">Colocar em coleta</button>' +
+      '</div>' +
+      '<div id="bar-aguardando-step2" style="display:none;align-items:center;gap:10px;">' +
+      '<span style="font-size:12px;color:var(--text-secondary);">Janela:</span>' +
+      '<button type="button" class="janela-pill on" data-j="Manhã" onclick="pickJanela(this)">Manhã</button>' +
+      '<button type="button" class="janela-pill" data-j="Tarde" onclick="pickJanela(this)">Tarde</button>' +
+      '<button class="actionbar-btn" onclick="hideJanelaStep()">Cancelar</button>' +
+      '<button class="actionbar-btn primary" onclick="confirmColocarEmColeta()">Confirmar</button>' +
+      '</div></div>';
+    html += '<div class="actionbar" id="bar-pronto">' +
+      '<span id="count-pronto" style="font-size:12.5px;color:var(--text-secondary);font-weight:500;"></span>' +
+      '<div style="display:flex;gap:8px;"><button class="actionbar-btn" onclick="bulkRetirar()">Retirar da coleta</button>' +
+      '<button class="actionbar-btn danger" onclick="bulkCancelar()">Cancelar coleta</button></div></div>';
+    html += '<div class="actionbar" id="bar-misto"><span style="font-size:12.5px;color:var(--text-warning);">Selecione pedidos com o mesmo status para agir em massa</span></div>';
+    html += '<table class="qt"><thead><tr><th style="width:28px;"></th><th>Pedido</th><th>Destinatário</th><th>Status da coleta</th><th>Rastreio</th><th style="width:28px;"></th></tr></thead><tbody>';
+    data.aguardando.forEach(function(r) {
+      var checkable = r.coleta && (r.queueStatus === 'aguardando_coleta' || r.queueStatus === 'pronto_para_coleta');
+      var m = statusMeta[r.coleta ? r.queueStatus : 'none'];
+      var subLine = '';
+      if (r.queueStatus === 'pronto_para_coleta') subLine = 'Previsão: ' + r.dataPrevista + ' · Janela ' + r.janelaEscolhida;
+      else if (r.motivo) subLine = r.motivo;
+      var kebabItems = '';
+      if (r.queueStatus === 'aguardando_coleta') {
+        kebabItems += '<div class="kebab-item" onclick="colocarUm(\'' + r.id + '\')"><i class="ti ti-truck" style="font-size:14px;"></i>Colocar em coleta</div>';
+      } else if (r.queueStatus === 'pronto_para_coleta') {
+        kebabItems += '<div class="kebab-item" onclick="retirarUm(\'' + r.id + '\')"><i class="ti ti-arrow-back-up" style="font-size:14px;"></i>Retirar da coleta</div>' +
+          '<div class="kebab-item danger" onclick="cancelarUm(\'' + r.id + '\')"><i class="ti ti-x" style="font-size:14px;"></i>Cancelar coleta</div>';
+      }
+      kebabItems += '<div class="kebab-item" onclick="openPanel(\'aguardando\',\'' + r.id + '\')"><i class="ti ti-eye" style="font-size:14px;"></i>Ver detalhes</div>';
+      html += '<tr id="row-' + r.id + '" class="' + (checkedIds.indexOf(r.id) > -1 ? 'sel' : '') + '">' +
+        '<td>' + (checkable ? '<input type="checkbox" style="width:auto;" ' + (checkedIds.indexOf(r.id) > -1 ? 'checked' : '') + ' onchange="toggleRowCheck(\'' + r.id + '\')">' : '') + '</td>' +
+        '<td>#' + r.id + '<br><span style="font-size:11px;color:var(--text-muted);">' + r.data + '</span></td>' +
+        '<td>' + r.nome + '<br><span style="font-size:11px;color:var(--text-muted);">' + r.transp + '</span></td>' +
+        '<td><span class="pill" style="background:' + m.bg + ';color:' + m.color + ';"><span class="dot" style="background:' + m.dot + ';"></span>' + m.text + '</span>' +
+        (subLine ? '<div style="font-size:10.5px;color:var(--text-muted);margin-top:3px;">' + subLine + '</div>' : '') + '</td>' +
+        '<td style="color:var(--text-accent);">' + r.rastreio + '</td>' +
+        '<td><div class="kebab-wrap"><button class="kebab-btn" onclick="toggleKebab(\'' + r.id + '\')"><i class="ti ti-dots-vertical" style="font-size:16px;"></i></button>' +
+        '<div class="kebab-menu" id="kebab-' + r.id + '">' + kebabItems + '</div></div></td>' +
+        '</tr>';
+    });
+    html += '</tbody></table>';
+  }
+
+  if (tab === 'enviadas') {
+    html += '<table><thead><tr><th>Pedido</th><th>Destinatário e envio</th><th>Status</th><th>Rastreio</th><th>Ações</th></tr></thead><tbody>';
+    data.enviadas.forEach(function(r) {
+      var statusCell = '<span class="badge" style="background:var(--bg-success);color:var(--text-success);">' + r.status + '</span>' +
+        (r.coleta ? '<br><span style="font-size:10px;color:var(--text-muted);"><i class="ti ti-check" style="font-size:11px;"></i> Coletado em ' + r.coletadoEm + '</span>' : '');
+      html += '<tr><td>#' + r.id + '<br><span style="font-size:11px;color:var(--text-muted);">' + r.data + '</span></td>' +
+        '<td>' + r.nome + '<br><span style="font-size:11px;color:var(--text-muted);">' + r.transp + '</span></td>' +
+        '<td>' + statusCell + '</td>' +
+        '<td style="color:var(--text-accent);">' + r.rastreio + '</td>' +
+        '<td><i class="ti ti-truck-delivery" style="font-size:15px;color:var(--text-muted);margin-right:6px;"></i><i class="ti ti-eye eye" onclick="openPanel(\'enviadas\',\'' + r.id + '\')"></i></td></tr>';
+    });
+    html += '</tbody></table>';
+  }
+
+  if (tab === 'canceladas') {
+    html += '<table><thead><tr><th></th><th>Pedido</th><th>Destinatário e envio</th><th>Status</th><th>Coleta</th><th>Ações</th></tr></thead><tbody>';
+    data.canceladas.forEach(function(r) {
+      html += '<tr><td><input type="checkbox" style="width:auto;"></td>' +
+        '<td>#' + r.id + '<br><span style="font-size:11px;color:var(--text-muted);">' + r.data + '</span></td>' +
+        '<td>' + r.nome + '<br><span style="font-size:11px;color:var(--text-muted);">' + r.transp + '</span></td>' +
+        '<td><span class="badge" style="background:var(--bg-danger);color:var(--text-danger);">' + r.status + '</span></td>' +
+        '<td style="color:var(--text-muted);font-size:12px;">' + (r.motivoCancel || '—') + '</td>' +
+        '<td><i class="ti ti-eye eye" onclick="openPanel(\'canceladas\',\'' + r.id + '\')"></i></td></tr>';
+    });
+    html += '</tbody></table>';
+  }
+
+  document.getElementById('tab-content').innerHTML = html;
+  updateActionBarsUI();
+}
+
+var statusMeta = {
+  aguardando_coleta: { text: 'Aguardando coleta', color: 'var(--text-secondary)', dot: 'var(--border-strong)', bg: 'var(--surface-1)' },
+  pronto_para_coleta: { text: 'Pronto para coleta', color: 'var(--text-accent)', dot: 'var(--text-accent)', bg: 'var(--bg-accent)' },
+  aguardando_confirmacao: { text: 'Aguardando confirmação da transportadora', color: 'var(--text-warning)', dot: 'var(--text-warning)', bg: 'var(--bg-warning)' },
+  ficou_para_tras: { text: 'Ficou p/ próximo dia útil', color: 'var(--text-danger)', dot: 'var(--text-danger)', bg: 'var(--bg-danger)' },
+  cancelada_coleta: { text: 'Coleta cancelada', color: 'var(--text-danger)', dot: 'var(--text-danger)', bg: 'var(--bg-danger)' },
+  none: { text: '—', color: 'var(--text-muted)', dot: 'transparent', bg: 'transparent' }
+};
+
+var checkedIds = [];
+var janelaEscolhida = 'Manhã';
+
+function toggleRowCheck(id) {
+  var i = checkedIds.indexOf(id);
+  if (i > -1) checkedIds.splice(i, 1); else checkedIds.push(id);
+  showTab('aguardando');
+}
+
+function toggleKebab(id) {
+  document.querySelectorAll('.kebab-menu').forEach(function(m) { if (m.id !== 'kebab-' + id) m.classList.remove('open'); });
+  var el = document.getElementById('kebab-' + id);
+  if (el) el.classList.toggle('open');
+}
+document.addEventListener('click', function(e) {
+  if (!e.target.closest('.kebab-wrap')) {
+    document.querySelectorAll('.kebab-menu').forEach(function(m) { m.classList.remove('open'); });
+  }
+});
+
+function updateActionBarsUI() {
+  var barAg = document.getElementById('bar-aguardando');
+  var barPr = document.getElementById('bar-pronto');
+  var barMx = document.getElementById('bar-misto');
+  if (!barAg) return;
+  barAg.classList.remove('show'); barPr.classList.remove('show'); barMx.classList.remove('show');
+  hideJanelaStep();
+  if (checkedIds.length === 0) return;
+  var statuses = checkedIds.map(function(id) { var r = data.aguardando.find(function(x) { return x.id === id; }); return r ? r.queueStatus : null; });
+  var allAg = statuses.every(function(s) { return s === 'aguardando_coleta'; });
+  var allPr = statuses.every(function(s) { return s === 'pronto_para_coleta'; });
+  if (allAg) { barAg.classList.add('show'); document.getElementById('count-aguardando').textContent = checkedIds.length + ' selecionado' + (checkedIds.length > 1 ? 's' : ''); }
+  else if (allPr) { barPr.classList.add('show'); document.getElementById('count-pronto').textContent = checkedIds.length + ' selecionado' + (checkedIds.length > 1 ? 's' : ''); }
+  else { barMx.classList.add('show'); }
+}
+
+function showJanelaStep() {
+  document.getElementById('bar-aguardando-step1').style.display = 'none';
+  document.getElementById('bar-aguardando-step2').style.display = 'flex';
+}
+function hideJanelaStep() {
+  var s1 = document.getElementById('bar-aguardando-step1');
+  var s2 = document.getElementById('bar-aguardando-step2');
+  if (s1) s1.style.display = 'flex';
+  if (s2) s2.style.display = 'none';
+}
+function pickJanela(el) {
+  document.querySelectorAll('.janela-pill').forEach(function(p) { p.classList.remove('on'); });
+  el.classList.add('on');
+  janelaEscolhida = el.dataset.j;
+}
+
+function confirmColocarEmColeta() {
+  var n = checkedIds.length;
+  checkedIds.forEach(function(id) {
+    var r = data.aguardando.find(function(x) { return x.id === id; });
+    if (r) { r.queueStatus = 'pronto_para_coleta'; r.janelaEscolhida = janelaEscolhida; r.dataPrevista = 'Hoje'; r.notificadoZumEm = 'agora mesmo'; }
+  });
+  checkedIds = [];
+  showTab('aguardando');
+  showToast(n + ' pedido' + (n > 1 ? 's' : '') + ' movido' + (n > 1 ? 's' : '') + ' para pronto para coleta. Zum notificada.');
+}
+
+function bulkRetirar() {
+  var n = checkedIds.length;
+  checkedIds.forEach(function(id) { retirarOne(id, true); });
+  checkedIds = [];
+  showTab('aguardando');
+  showToast(n + ' pedido' + (n > 1 ? 's' : '') + ' retirado' + (n > 1 ? 's' : '') + ' da coleta. Zum notificada.');
+}
+
+function bulkCancelar() {
+  if (!confirm('Cancelar a coleta dos pedidos selecionados? Eles deixarão de fazer parte do processo de coleta.')) return;
+  var n = checkedIds.length;
+  checkedIds.forEach(function(id) { cancelarOne(id, true); });
+  checkedIds = [];
+  showTab('aguardando');
+  showToast(n + ' coleta' + (n > 1 ? 's' : '') + ' cancelada' + (n > 1 ? 's' : '') + '. Zum notificada.');
+}
+
+function colocarUm(id) {
+  var r = data.aguardando.find(function(x) { return x.id === id; });
+  if (r) { r.queueStatus = 'pronto_para_coleta'; r.janelaEscolhida = 'Manhã'; r.dataPrevista = 'Hoje'; r.notificadoZumEm = 'agora mesmo'; }
+  showTab('aguardando');
+  showToast('Pedido #' + id + ' movido para pronto para coleta. Zum notificada.');
+}
+
+function moveToPronto(id, janela) {
+  var r = data.aguardando.find(function(x) { return x.id === id; });
+  if (r) { r.queueStatus = 'pronto_para_coleta'; r.janelaEscolhida = janela; r.dataPrevista = 'Hoje'; r.notificadoZumEm = 'agora mesmo'; }
+  showToast('Pedido #' + id + ' movido para pronto para coleta. Zum notificada.');
+}
+
+function retirarUm(id) {
+  retirarOne(id, true);
+  showTab('aguardando');
+  showToast('Pedido #' + id + ' retirado da coleta. Zum notificada.');
+}
+
+function cancelarUm(id) {
+  if (!confirm('Cancelar a coleta do pedido #' + id + '?')) return;
+  cancelarOne(id, true);
+  showTab('aguardando');
+  showToast('Coleta do pedido #' + id + ' cancelada. Zum notificada.');
+}
+
+function retirarOne(id, skipRerender) {
+  var r = data.aguardando.find(function(x) { return x.id === id; });
+  if (r) { r.queueStatus = 'aguardando_coleta'; r.janelaEscolhida = null; r.dataPrevista = null; r.notificadoZumEm = null; }
+  if (!skipRerender) { showTab('aguardando'); closePanel(); }
+}
+
+function cancelarOne(id, skipRerender) {
+  var r = data.aguardando.find(function(x) { return x.id === id; });
+  if (r) { r.queueStatus = 'cancelada_coleta'; r.janelaEscolhida = null; r.dataPrevista = null; r.notificadoZumEm = null; }
+  if (!skipRerender) { showTab('aguardando'); closePanel(); }
+}
+
+var toastTimer;
+function showToast(msg) {
+  var t = document.getElementById('toast');
+  t.textContent = msg;
+  t.classList.add('show');
+  clearTimeout(toastTimer);
+  toastTimer = setTimeout(function() { t.classList.remove('show'); }, 3200);
+}
+
+function closePanel() {
+  document.getElementById('side-panel').style.display = 'none';
+}
+
+function openPanel(tab, id) {
+  var r = data[tab].find(function(x) { return x.id === id; });
+  var panel = document.getElementById('side-panel');
+
+  if (!r.coleta) {
+    panel.innerHTML =
+      '<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:10px;">' +
+      '<p style="font-weight:500;font-size:14px;margin:0;">Pedido #' + r.id + '</p>' +
+      '<i class="ti ti-x" style="cursor:pointer;color:var(--text-muted);" onclick="closePanel()"></i></div>' +
+      '<p style="font-size:12px;color:var(--text-muted);margin:0 0 12px;">' + r.transp + '</p>' +
+      '<div style="background:var(--surface-2);border-radius:var(--radius);padding:10px 12px;">' +
+      '<p style="font-size:13px;margin:0;">Este pedido não possui coleta.</p></div>';
+    panel.style.display = 'block';
+    return;
+  }
+
+  var timelineHtml = steps.map(function(label, i) {
+    var done = i < (r.doneSteps || 0);
+    var isLast = i === steps.length - 1;
+    return '<div class="timeline-row">' +
+      '<div class="timeline-dot-line">' +
+      (done ? '<i class="ti ti-circle-check-filled" style="font-size:16px;color:var(--text-success);"></i>' : '<span style="width:12px;height:12px;border-radius:50%;border:1.5px solid var(--border-strong);display:inline-block;margin:2px;"></span>') +
+      (isLast ? '' : '<div class="timeline-line' + (done ? ' done' : '') + '"></div>') +
+      '</div><p style="font-size:12px;margin:0 0 ' + (isLast ? '0' : '12') + 'px;' + (done ? '' : 'color:var(--text-muted);') + '">' + label + '</p></div>';
+  }).join('');
+
+  var actionsHtml = '';
+  if (tab === 'aguardando' && r.queueStatus === 'aguardando_coleta') {
+    actionsHtml = '<div style="margin-top:14px;">' +
+      '<label style="font-size:11px;color:var(--text-muted);display:block;margin-bottom:4px;">Janela</label>' +
+      '<select id="panel-janela-' + r.id + '" style="margin-bottom:8px;"><option>Manhã</option><option>Tarde</option></select>' +
+      '<button onclick="moveToPronto(\'' + r.id + '\', document.getElementById(\'panel-janela-' + r.id + '\').value); showTab(\'aguardando\'); closePanel();" style="font-size:12px;border-color:var(--border-accent);color:var(--text-accent);width:100%;">Mover para pronto para coleta</button>' +
+      '</div>';
+  } else if (tab === 'aguardando' && r.queueStatus === 'pronto_para_coleta') {
+    actionsHtml = '<div style="background:var(--surface-1);border-radius:var(--radius);padding:8px 10px;margin-top:14px;margin-bottom:10px;">' +
+      '<p style="font-size:11px;color:var(--text-secondary);margin:0;">Previsão: ' + r.dataPrevista + ' · Janela ' + r.janelaEscolhida + '</p>' +
+      '<p style="font-size:10px;color:var(--text-muted);margin:2px 0 0;">Zum notificada ' + r.notificadoZumEm + '</p>' +
+      '</div>' +
+      '<div style="display:flex;gap:6px;">' +
+      '<button onclick="retirarUm(\'' + r.id + '\'); closePanel();" style="font-size:12px;flex:1;">Retirar da coleta</button>' +
+      '<button onclick="cancelarUm(\'' + r.id + '\'); closePanel();" style="font-size:12px;flex:1;color:var(--text-danger);border-color:var(--text-danger);">Cancelar coleta</button>' +
+      '</div>';
+  } else if (tab === 'enviadas' && r.coleta) {
+    actionsHtml = '<div style="margin-top:14px;">' +
+      '<button style="font-size:12px;width:100%;"><i class="ti ti-file-text" style="font-size:13px;margin-right:4px;vertical-align:-2px;"></i>Ver romaneio</button>' +
+      '<p style="font-size:10px;color:var(--text-muted);margin:8px 0 0;text-align:center;">Também enviado por e-mail e SMS quando a coleta foi confirmada</p>' +
+      '</div>';
+  }
+
+  panel.innerHTML =
+    '<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:2px;">' +
+    '<p style="font-weight:500;font-size:14px;margin:0;">Pedido #' + r.id + '</p>' +
+    '<i class="ti ti-x" style="cursor:pointer;color:var(--text-muted);" onclick="closePanel()"></i></div>' +
+    '<p style="font-size:12px;color:var(--text-muted);margin:0 0 12px;">' + r.nome + '</p>' +
+    (r.motivo ? '<div style="background:var(--bg-danger);border-radius:var(--radius);padding:8px 10px;margin-bottom:12px;"><p style="font-size:11px;color:var(--text-danger);margin:0;">' + r.motivo + '</p></div>' : '') +
+    '<div style="display:flex;flex-direction:column;gap:6px;margin-bottom:14px;font-size:11px;">' +
+    '<div style="display:flex;justify-content:space-between;"><span style="color:var(--text-muted);">Método de envio</span><span>' + r.transp + '</span></div>' +
+    '<div style="display:flex;justify-content:space-between;"><span style="color:var(--text-muted);">Status</span><span>' + r.status + '</span></div>' +
+    '<div style="display:flex;justify-content:space-between;"><span style="color:var(--text-muted);">Janela de atendimento</span><span>' + r.janela + '</span></div>' +
+    '<div style="display:flex;justify-content:space-between;"><span style="color:var(--text-muted);">Endereço da coleta</span><span style="text-align:right;max-width:160px;">' + r.endereco + '</span></div>' +
+    '</div>' +
+    '<div style="border-top:0.5px solid var(--border);padding-top:12px;">' + timelineHtml + '</div>' +
+    actionsHtml;
+  panel.style.display = 'block';
+}
+
+showTab('aguardando');
+showView('home');
+</script>
+
+</body>
+</html>
